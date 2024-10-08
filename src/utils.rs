@@ -1,3 +1,4 @@
+use reqwest;
 use std::ffi::CString;
 use std::{env, fs};
 
@@ -6,7 +7,8 @@ pub fn get_binary_filesystem(path: &str) -> Vec<u8> {
 }
 
 pub fn get_binary_http(url: &str) -> Vec<u8> {
-    todo!()
+    let response = reqwest::blocking::get(url).expect("Failed to download file");
+    response.bytes().unwrap().to_vec()
 }
 
 pub fn get_env_vars() -> Vec<CString> {
