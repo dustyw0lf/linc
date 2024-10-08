@@ -20,3 +20,6 @@ git clone https://github.com/dustyw0lf/libinject-linux.git
 ```bash
 cargo run --example anon_file
 ```
+
+## Acknowledgments
+The `memfd_create(2)` implementation is based on an article by @magisterquis: [In-Memory-Only ELF Execution (Without tmpfs)](https://magisterquis.github.io/2018/03/31/in-memory-only-elf-execution.html)
