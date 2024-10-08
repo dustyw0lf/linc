@@ -1,9 +1,8 @@
-use reqwest;
 use std::ffi::CString;
 use std::{env, fs};
 
 pub fn get_binary_filesystem(path: &str) -> Vec<u8> {
-    return fs::read(path).expect("Faild to open file");
+    fs::read(path).expect("Faild to open file")
 }
 
 pub fn get_binary_http(url: &str) -> Vec<u8> {
