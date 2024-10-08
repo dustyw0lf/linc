@@ -1,0 +1,13 @@
+[package]
+name = "inject"
+authors.workspace = true
+version = "0.1.0"
+edition.workspace = true
+description = "A CLI interface for the libinject crate."
+
+[[bin]]
+name = "inject"
+
+[dependencies]
+libinject = { path = "../libinject" }
+clap = { version = "4.5.11", features = ["cargo"] }

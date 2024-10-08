@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
-extern crate libinject_linux;
-use libinject_linux::{anon_file, get_binary_filesystem, get_binary_http};
+extern crate libinject;
+use libinject::{anon_file, get_binary_filesystem, get_binary_http};
 
 fn main() {
     // let binary_location = "/usr/bin/ls";

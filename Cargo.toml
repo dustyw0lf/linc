@@ -1,8 +1,15 @@
-[package]
-name = "libinject-linux"
+[workspace]
+members = ["inject", "libinject"]
+resolver = "2"
+
+[workspace.package]
+authors = ["dustyw0lf"]
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
-nix = { version = "0.29", features = ["ptrace", "mqueue"] }
-reqwest = { version = "0.12.8", features = ["blocking"] }
+[profile.release]
+strip = true
+opt-level = 3     # 3 enables all optimizations, "s" trades runtime speed for size
+lto = true        # also called "fat" lto. Attempts to perform optimizations across all crates within the dependency graph
+codegen-units = 1
+# panic = "abort" # do not unwind the stack and clean data
