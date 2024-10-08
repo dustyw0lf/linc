@@ -4,7 +4,7 @@
 
 ## Functionality
 The following process injection techniques are currently implemented:
-- Using [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to execute an anonymous, in-memory, file. 
+- Using [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file that lives in memory, write an ELF to it, and then execute.
 
 ## Usage
 Add `libinject-linux` as a dependency to your Rust project
