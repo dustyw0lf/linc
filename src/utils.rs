@@ -1,5 +1,21 @@
-use std::env;
 use std::ffi::CString;
+use std::{env, fs};
+
+pub fn get_binary_filesystem(path: &str) -> Vec<u8> {
+    return fs::read(path).expect("Faild to open file");
+}
+
+pub fn get_binary_http(url: &str) -> Vec<u8> {
+    todo!()
+}
+
+pub fn get_env_vars() -> Vec<CString> {
+    let mut env_vars: Vec<CString> = Vec::new();
+    for (key, value) in env::vars() {
+        env_vars.push(CString::new(format!("{}={}", key, value)).unwrap());
+    }
+    env_vars
+}
 
 pub fn parse_args_for_fexecve(binary: &str, args: &str) -> Vec<CString> {
     let mut bin_vec = vec![CString::new(binary).unwrap()];
@@ -10,12 +26,4 @@ pub fn parse_args_for_fexecve(binary: &str, args: &str) -> Vec<CString> {
 
     bin_vec.append(&mut args_vec);
     bin_vec
-}
-
-pub fn get_env_vars() -> Vec<CString> {
-    let mut env_vars: Vec<CString> = Vec::new();
-    for (key, value) in env::vars() {
-        env_vars.push(CString::new(format!("{}={}", key, value)).unwrap());
-    }
-    env_vars
 }
