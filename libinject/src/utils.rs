@@ -12,7 +12,7 @@ pub fn get_binary_http(url: &str) -> Vec<u8> {
 }
 
 pub fn get_env() -> Vec<CString> {
-    // Implementation taken from https://github.com/io12/userland-execve-rust/blob/main/src/main.rs
+    // Source: https://github.com/io12/userland-execve-rust/blob/main/src/main.rs
     env::vars_os()
         .map(|(key, val)| {
             [key, OsString::from("="), val]
@@ -24,7 +24,7 @@ pub fn get_env() -> Vec<CString> {
 }
 
 fn os_string_to_c_string(string: OsString) -> CString {
-    // Implementation taken from https://github.com/io12/userland-execve-rust/blob/main/src/main.rs
+    // Source: https://github.com/io12/userland-execve-rust/blob/main/src/main.rs
     let mut vector = string.into_vec();
     vector.push(0);
     CString::from_vec_with_nul(vector).unwrap()
