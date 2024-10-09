@@ -1,4 +1,5 @@
-use std::ffi::CString;
+use std::ffi::{CString, OsString};
+use std::os::unix::ffi::OsStringExt;
 use std::{env, fs};
 
 pub fn get_binary_filesystem(path: &str) -> Vec<u8> {
@@ -10,12 +11,23 @@ pub fn get_binary_http(url: &str) -> Vec<u8> {
     response.bytes().unwrap().to_vec()
 }
 
-pub fn get_env_vars() -> Vec<CString> {
-    let mut env_vars: Vec<CString> = Vec::new();
-    for (key, value) in env::vars() {
-        env_vars.push(CString::new(format!("{}={}", key, value)).unwrap());
-    }
-    env_vars
+pub fn get_env() -> Vec<CString> {
+    // Implementation taken from https://github.com/io12/userland-execve-rust/blob/main/src/main.rs
+    env::vars_os()
+        .map(|(key, val)| {
+            [key, OsString::from("="), val]
+                .into_iter()
+                .collect::<OsString>()
+        })
+        .map(os_string_to_c_string)
+        .collect()
+}
+
+fn os_string_to_c_string(string: OsString) -> CString {
+    // Implementation taken from https://github.com/io12/userland-execve-rust/blob/main/src/main.rs
+    let mut vector = string.into_vec();
+    vector.push(0);
+    CString::from_vec_with_nul(vector).unwrap()
 }
 
 pub fn parse_args_for_fexecve(binary: &str, args: &str) -> Vec<CString> {
