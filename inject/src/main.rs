@@ -4,7 +4,7 @@ mod cli;
 
 use crate::cli::build_cli;
 
-use libinject::{anon_file, get_binary_filesystem, get_binary_http};
+use libinject::{get_binary_filesystem, get_binary_http, memfd};
 
 fn main() {
     let args = build_cli().get_matches();
@@ -19,7 +19,7 @@ fn main() {
         false => get_binary_filesystem(binary.as_str()),
     };
 
-    match anon_file(binary_name, &binary_args, &binary_bytes) {
+    match memfd(binary_name, &binary_args, &binary_bytes) {
         Ok(res) => res,
         Err(error) => panic!("An error occured: {error:?}"),
     };

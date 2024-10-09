@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 extern crate libinject;
-use libinject::{anon_file, get_binary_filesystem, get_binary_http};
+use libinject::{get_binary_filesystem, get_binary_http, memfd};
 
 fn main() {
     // let binary_location = "/usr/bin/ls";
@@ -9,7 +9,7 @@ fn main() {
     // let binary_bytes = get_binary_filesystem(binary_location);
     let binary_bytes = get_binary_http(binary_location);
 
-    match anon_file(binary_name, "-l -A -h", &binary_bytes) {
+    match memfd(binary_name, "-l -A -h", &binary_bytes) {
         Ok(res) => res,
         Err(error) => panic!("An error occured: {error:?}"),
     };

@@ -1,6 +1,6 @@
 mod core;
 
-pub use crate::core::anon_file;
+pub use crate::core::memfd;
 
 mod utils;
 

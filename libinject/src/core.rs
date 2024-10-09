@@ -6,7 +6,7 @@ use nix::unistd::{fexecve, write};
 use std::ffi::CString;
 use std::os::fd::AsRawFd;
 
-pub fn anon_file(binary_name: &str, args: &str, binary_bytes: &[u8]) -> Result<(), Errno> {
+pub fn memfd(binary_name: &str, args: &str, binary_bytes: &[u8]) -> Result<(), Errno> {
     let anon_file_name = CString::new("").unwrap();
     let p_file_name = anon_file_name.as_c_str();
 
