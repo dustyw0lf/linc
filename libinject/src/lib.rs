@@ -1,6 +1,6 @@
 mod core;
 
-pub use crate::core::memfd;
+pub use crate::core::{hollow, memfd};
 
 mod utils;
 

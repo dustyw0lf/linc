@@ -30,13 +30,10 @@ fn os_string_to_c_string(string: OsString) -> CString {
     CString::from_vec_with_nul(vector).unwrap()
 }
 
-pub fn parse_args_for_fexecve(binary: &str, args: &str) -> Vec<CString> {
-    let mut bin_vec = vec![CString::new(binary).unwrap()];
-    let mut args_vec: Vec<CString> = args
+pub fn str_to_vec_c_string(string: &str) -> Vec<CString> {
+    let string_vec: Vec<CString> = string
         .split_whitespace()
         .map(|x| CString::new(x).unwrap())
         .collect();
-
-    bin_vec.append(&mut args_vec);
-    bin_vec
+    string_vec
 }
