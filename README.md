@@ -11,7 +11,7 @@ The following techniques are currently implemented:
 ### Library
 Add `libinject-linux` as a dependency to your Rust project
 ```bash
-cargo add --git https://github.com/dustyw0lf/libinject-linux.git
+cargo add --git https://github.com/dustyw0lf/libinject-linux.git libinject
 ```
 
 ### Library examples
