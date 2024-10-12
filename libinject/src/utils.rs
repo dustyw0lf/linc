@@ -1,15 +1,6 @@
+use std::env;
 use std::ffi::{CString, OsString};
 use std::os::unix::ffi::OsStringExt;
-use std::{env, fs};
-
-pub fn get_binary_filesystem(path: &str) -> Vec<u8> {
-    fs::read(path).expect("Faild to open file")
-}
-
-pub fn get_binary_http(url: &str) -> Vec<u8> {
-    let response = reqwest::blocking::get(url).expect("Failed to download file");
-    response.bytes().unwrap().to_vec()
-}
 
 pub fn get_env() -> Vec<CString> {
     // Source: https://github.com/io12/userland-execve-rust/blob/main/src/main.rs

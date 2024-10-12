@@ -4,7 +4,11 @@ mod cli;
 
 use crate::cli::build_cli;
 
-use libinject::{get_binary_filesystem, get_binary_http, memfd};
+mod utils;
+
+use crate::utils::{get_binary_filesystem, get_binary_http};
+
+use libinject::memfd;
 
 fn main() {
     let args = build_cli().get_matches();

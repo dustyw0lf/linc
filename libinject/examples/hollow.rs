@@ -1,7 +1,17 @@
 #![allow(unused_imports, unused_variables)]
 extern crate libinject;
-use libinject::{get_binary_filesystem, get_binary_http, hollow};
+use libinject::hollow;
 use std::env::current_dir;
+use std::fs;
+
+pub fn get_binary_filesystem(path: &str) -> Vec<u8> {
+    fs::read(path).expect("Faild to open file")
+}
+
+pub fn get_binary_http(url: &str) -> Vec<u8> {
+    let response = reqwest::blocking::get(url).expect("Failed to download file");
+    response.bytes().unwrap().to_vec()
+}
 
 fn main() {
     let path = current_dir().unwrap();

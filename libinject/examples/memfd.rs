@@ -1,6 +1,17 @@
 #![allow(unused_imports)]
 extern crate libinject;
-use libinject::{get_binary_filesystem, get_binary_http, memfd};
+use libinject::memfd;
+
+use std::fs;
+
+pub fn get_binary_filesystem(path: &str) -> Vec<u8> {
+    fs::read(path).expect("Faild to open file")
+}
+
+pub fn get_binary_http(url: &str) -> Vec<u8> {
+    let response = reqwest::blocking::get(url).expect("Failed to download file");
+    response.bytes().unwrap().to_vec()
+}
 
 fn main() {
     // let binary_location = "/usr/bin/ls";

@@ -11,3 +11,8 @@ name = "inject"
 [dependencies]
 libinject = { path = "../libinject" }
 clap = { version = "4.5.11", features = ["cargo"] }
+reqwest = { version = "0.12.8", default-features = false, features = [
+    "blocking",
+    "default-tls",
+    "http2",
+] }
