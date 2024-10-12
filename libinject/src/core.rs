@@ -28,7 +28,7 @@ pub fn hollow(target: &str, args: &str, shellcode_bytes: &[u8]) -> Result<(), Er
         }
 
         Ok(ForkResult::Child) => {
-            traceme().expect("Failed to trace child process");
+            traceme()?;
 
             let target_c_string = CString::new(target).unwrap();
 
