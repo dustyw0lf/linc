@@ -5,7 +5,7 @@
 ## Functionality
 The following techniques are currently implemented:
 - Using [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file in memory, write an ELF to it, and then execute.
-- Using [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to overwrite the RIP register of a forked process with shellcode.
+- Using [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to stop a forked process, overwrite its RIP register with shellcode, and then resume it.
 
 ## Usage
 ### Library
