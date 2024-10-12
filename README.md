@@ -16,7 +16,7 @@ cargo add --git https://github.com/dustyw0lf/libinject-linux.git
 
 ### Library examples
 >[!note]
->The functions can take binaries or shellcode from either URLs or filesystem paths.
+>The examples can take binaries or shellcode from either URLs or filesystem paths.
 
 Clone the repo
 ```bash
