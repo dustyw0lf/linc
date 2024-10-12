@@ -63,15 +63,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug example 'anon_file'",
+            "name": "Debug example 'hollow'",
             "cargo": {
                 "args": [
                     "build",
-                    "--example=anon_file",
+                    "--example=hollow",
                     "--package=libinject"
                 ],
                 "filter": {
-                    "name": "anon_file",
+                    "name": "hollow",
                     "kind": "example"
                 }
             },
@@ -81,16 +81,53 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in example 'anon_file'",
+            "name": "Debug unit tests in example 'hollow'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--example=anon_file",
+                    "--example=hollow",
                     "--package=libinject"
                 ],
                 "filter": {
-                    "name": "anon_file",
+                    "name": "hollow",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'memfd'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=memfd",
+                    "--package=libinject"
+                ],
+                "filter": {
+                    "name": "memfd",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'memfd'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=memfd",
+                    "--package=libinject"
+                ],
+                "filter": {
+                    "name": "memfd",
                     "kind": "example"
                 }
             },
