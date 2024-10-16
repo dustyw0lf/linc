@@ -1,5 +1,5 @@
 mod core;
 
-pub use crate::core::{hollow, memfd};
+pub use core::{hollow, memfd};
 
 mod utils;
