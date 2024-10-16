@@ -4,10 +4,12 @@ use std::fs;
 
 fn main() {
     let binary_location = "/usr/bin/ls";
-    // let binary_location = "http://127.0.0.1:8081/ls";
-    let binary_name = binary_location.split('/').last().unwrap();
     let binary_bytes = get_binary_filesystem(binary_location);
+
+    // let binary_location = "http://127.0.0.1:8081/ls";
     // let binary_bytes = get_binary_http(binary_location);
+
+    let binary_name = binary_location.split('/').last().unwrap();
 
     match memfd(binary_name, "-l -A -h", &binary_bytes) {
         Ok(res) => res,
@@ -20,6 +22,11 @@ pub fn get_binary_filesystem(path: &str) -> Vec<u8> {
 }
 
 pub fn get_binary_http(url: &str) -> Vec<u8> {
-    let response = reqwest::blocking::get(url).expect("Failed to download file");
-    response.bytes().unwrap().to_vec()
+    let response = ureq::get(url).call().unwrap();
+
+    let mut bytes: Vec<u8> = Vec::new();
+
+    response.into_reader().read_to_end(&mut bytes).unwrap();
+
+    bytes
 }

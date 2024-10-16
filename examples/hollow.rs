@@ -28,6 +28,11 @@ fn get_binary_filesystem(path: &str) -> Vec<u8> {
 }
 
 fn get_binary_http(url: &str) -> Vec<u8> {
-    let response = reqwest::blocking::get(url).expect("Failed to download file");
-    response.bytes().unwrap().to_vec()
+    let response = ureq::get(url).call().unwrap();
+
+    let mut bytes: Vec<u8> = Vec::new();
+
+    response.into_reader().read_to_end(&mut bytes).unwrap();
+
+    bytes
 }
