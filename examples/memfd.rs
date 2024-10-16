@@ -1,4 +1,3 @@
-extern crate libinject_linux;
 use libinject_linux::memfd;
 
 use std::fs;
