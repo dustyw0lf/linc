@@ -11,7 +11,7 @@ The following techniques are currently implemented:
 ### Library
 Add `libinject-linux` as a dependency to your Rust project
 ```bash
-cargo add --git https://github.com/dustyw0lf/libinject-linux.git libinject
+cargo add --git https://github.com/dustyw0lf/libinject-linux.git
 ```
 
 ### Library examples
@@ -28,7 +28,7 @@ Run the `memfd` example
 cargo run --example memfd
 ```
 
-To run the `hollow` example, first `cd libinject-linux/libinject/examples` and then
+To run the `hollow` example, first `cd libinject-linux/examples` and then
 ```bash
 cargo run --example hollow
 ```
