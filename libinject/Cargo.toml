@@ -15,10 +15,3 @@ reqwest = { version = "0.12.8", default-features = false, features = [
     "default-tls",
     "http2",
 ] }
-
-[profile.release]
-strip = true
-opt-level = 3     # 3 enables all optimizations, "s" trades runtime speed for size
-lto = true        # also called "fat" lto. Attempts to perform optimizations across all crates within the dependency graph
-codegen-units = 1
-# panic = "abort" # do not unwind the stack and clean data
