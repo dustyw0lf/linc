@@ -7,53 +7,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'inject'",
-            "cargo": {
-                "args": [
-                    "build",
-                    "--bin=inject",
-                    "--package=inject"
-                ],
-                "filter": {
-                    "name": "inject",
-                    "kind": "bin"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug unit tests in executable 'inject'",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--no-run",
-                    "--bin=inject",
-                    "--package=inject"
-                ],
-                "filter": {
-                    "name": "inject",
-                    "kind": "bin"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug unit tests in library 'libinject'",
+            "name": "Debug unit tests in library 'libinject_linux'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
                     "--lib",
-                    "--package=libinject"
+                    "--package=libinject-linux"
                 ],
                 "filter": {
-                    "name": "libinject",
+                    "name": "libinject_linux",
                     "kind": "lib"
                 }
             },
@@ -68,7 +31,7 @@
                 "args": [
                     "build",
                     "--example=hollow",
-                    "--package=libinject"
+                    "--package=libinject-linux"
                 ],
                 "filter": {
                     "name": "hollow",
@@ -87,7 +50,7 @@
                     "test",
                     "--no-run",
                     "--example=hollow",
-                    "--package=libinject"
+                    "--package=libinject-linux"
                 ],
                 "filter": {
                     "name": "hollow",
@@ -105,7 +68,7 @@
                 "args": [
                     "build",
                     "--example=memfd",
-                    "--package=libinject"
+                    "--package=libinject-linux"
                 ],
                 "filter": {
                     "name": "memfd",
@@ -124,7 +87,7 @@
                     "test",
                     "--no-run",
                     "--example=memfd",
-                    "--package=libinject"
+                    "--package=libinject-linux"
                 ],
                 "filter": {
                     "name": "memfd",
