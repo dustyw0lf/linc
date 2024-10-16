@@ -1,6 +1,6 @@
 #![allow(unused_variables, dead_code)]
-extern crate libinject;
-use libinject::hollow;
+extern crate libinject_linux;
+use libinject_linux::hollow;
 
 use std::env::current_dir;
 use std::fs;
