@@ -1,5 +1,6 @@
+// Modules
 mod core;
-
-pub use core::{hollow, memfd};
-
 mod utils;
+
+// Public re-exports
+pub use core::{hollow, memfd};
