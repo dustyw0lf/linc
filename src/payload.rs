@@ -34,7 +34,7 @@ impl Payload {
             name: path.split('/').last().unwrap().to_string(),
             args: String::new(),
             payload_type: payload_type,
-            bytes: fs::read(&path).expect("Faild to open file"),
+            bytes: fs::read(path).expect("Faild to open file"),
             target: String::new(),
             target_args: String::new(),
         }
