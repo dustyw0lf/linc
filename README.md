@@ -30,7 +30,12 @@ cd libinject-linux
 ### memfd
 Run the example
 ```bash
-cargo run --example memfd
+cargo run --example memfd_executable
+```
+
+or the shellcode example
+```bash
+cargo run --example memfd_shellcode
 ```
 
 ### hollow
