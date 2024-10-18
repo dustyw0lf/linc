@@ -1,10 +1,10 @@
 use std::fs;
 
 pub struct Payload {
-    name: String,
-    args: String,
-    payload_type: PayloadType,
-    bytes: Vec<u8>,
+    pub name: String,
+    pub args: String,
+    pub payload_type: PayloadType,
+    pub bytes: Vec<u8>,
 }
 
 pub enum PayloadType {
