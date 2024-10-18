@@ -63,15 +63,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug example 'memfd'",
+            "name": "Debug example 'memfd_executable'",
             "cargo": {
                 "args": [
                     "build",
-                    "--example=memfd",
+                    "--example=memfd_executable",
                     "--package=libinject-linux"
                 ],
                 "filter": {
-                    "name": "memfd",
+                    "name": "memfd_executable",
                     "kind": "example"
                 }
             },
@@ -81,16 +81,53 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in example 'memfd'",
+            "name": "Debug unit tests in example 'memfd_executable'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--example=memfd",
+                    "--example=memfd_executable",
                     "--package=libinject-linux"
                 ],
                 "filter": {
-                    "name": "memfd",
+                    "name": "memfd_executable",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'memfd_shellcode'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=memfd_shellcode",
+                    "--package=libinject-linux"
+                ],
+                "filter": {
+                    "name": "memfd_shellcode",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'memfd_shellcode'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=memfd_shellcode",
+                    "--package=libinject-linux"
+                ],
+                "filter": {
+                    "name": "memfd_shellcode",
                     "kind": "example"
                 }
             },
