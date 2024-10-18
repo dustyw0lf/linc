@@ -1,6 +1,12 @@
-// region: Modules
+// region:    --- Modules
+
 mod core;
 mod utils;
 
-// region: Public re-exports
+// endregion: --- Modules
+
+// region:    --- Public API
+
 pub use core::{hollow, memfd};
+
+// endregion: --- Public API
