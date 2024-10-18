@@ -48,3 +48,6 @@ Run the example
 ```bash
 cargo run --example hollow
 ```
+
+## Acknowledgments
+The code that turns shellcode into an ELF file was taken from the [minimal-elf](https://github.com/tchajed/minimal-elf) repository by [Tej Chajed](https://www.chajed.io).
