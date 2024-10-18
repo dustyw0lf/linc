@@ -26,15 +26,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug example 'hollow'",
+            "name": "Debug example 'hollow_shellcode'",
             "cargo": {
                 "args": [
                     "build",
-                    "--example=hollow",
+                    "--example=hollow_shellcode",
                     "--package=libinject-linux"
                 ],
                 "filter": {
-                    "name": "hollow",
+                    "name": "hollow_shellcode",
                     "kind": "example"
                 }
             },
@@ -44,16 +44,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in example 'hollow'",
+            "name": "Debug unit tests in example 'hollow_shellcode'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--example=hollow",
+                    "--example=hollow_shellcode",
                     "--package=libinject-linux"
                 ],
                 "filter": {
-                    "name": "hollow",
+                    "name": "hollow_shellcode",
                     "kind": "example"
                 }
             },
