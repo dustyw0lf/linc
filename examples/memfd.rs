@@ -1,32 +1,11 @@
-use libinject_linux::memfd;
-
-use std::fs;
+use libinject_linux::{memfd, Payload, PayloadType};
 
 fn main() {
-    let binary_location = "/usr/bin/ls";
-    let binary_bytes = get_binary_filesystem(binary_location);
+    let payload = Payload::from_file("/usr/bin/ls", PayloadType::Executable).set_args("-l -a -h");
+    // let payload = Payload::from_url("http://127.0.0.1:8081/ls", PayloadType::Executable).set_args("-l -a -h");
 
-    // let binary_location = "http://127.0.0.1:8081/ls";
-    // let binary_bytes = get_binary_http(binary_location);
-
-    let binary_name = binary_location.split('/').last().unwrap();
-
-    match memfd(binary_name, "-l -A -h", &binary_bytes) {
+    match memfd(payload) {
         Ok(res) => res,
         Err(error) => panic!("An error occured: {error:?}"),
     };
-}
-
-pub fn get_binary_filesystem(path: &str) -> Vec<u8> {
-    fs::read(path).expect("Faild to open file")
-}
-
-pub fn get_binary_http(url: &str) -> Vec<u8> {
-    let response = ureq::get(url).call().unwrap();
-
-    let mut bytes: Vec<u8> = Vec::new();
-
-    response.into_reader().read_to_end(&mut bytes).unwrap();
-
-    bytes
 }
