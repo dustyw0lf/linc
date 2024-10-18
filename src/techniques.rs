@@ -20,6 +20,9 @@ pub fn hollow(payload: Payload) -> Result<(), Errno> {
 
             match payload.payload_type {
                 PayloadType::Executable => {
+                    todo!()
+                }
+                PayloadType::Shellcode => {
                     let regs = getregs(child)?;
 
                     let mut addr = regs.rip;
@@ -30,9 +33,6 @@ pub fn hollow(payload: Payload) -> Result<(), Errno> {
                     }
 
                     detach(child, None)?;
-                }
-                PayloadType::Shellcode => {
-                    todo!()
                 }
             }
         }
