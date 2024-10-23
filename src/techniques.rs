@@ -70,8 +70,7 @@ pub fn memfd(payload: Payload) -> Result<(), Errno> {
 
     unistd::write(&fd, &bytes)?;
 
-    let mut args = str_to_vec_c_string(&payload.name);
-    args.append(&mut str_to_vec_c_string(&payload.args));
+    let args = str_to_vec_c_string(&payload.args);
     let args_slice = args.as_slice();
 
     let env = get_env();

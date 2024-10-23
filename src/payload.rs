@@ -66,7 +66,7 @@ impl Payload {
 // Chainable setters
 impl Payload {
     pub fn set_args(mut self, args: &str) -> Self {
-        self.args = args.to_string();
+        self.args = self.name.clone() + " " + args;
         self
     }
 
@@ -76,7 +76,7 @@ impl Payload {
     }
 
     pub fn set_target_args(mut self, target_args: &str) -> Self {
-        self.target_args = target_args.to_string();
+        self.target_args = self.target.clone() + " " + target_args;
         self
     }
 }
