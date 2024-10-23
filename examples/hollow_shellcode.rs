@@ -14,8 +14,7 @@ fn main() {
         .set_target("/usr/bin/yes")
         .set_target_args("YES");
 
-    match hollow(payload) {
-        Ok(res) => res,
-        Err(error) => panic!("An error occured: {error:?}"),
-    };
+    if let Err(e) = hollow(payload) {
+        panic!("An error occured: {e:?}");
+    }
 }

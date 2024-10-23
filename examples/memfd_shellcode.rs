@@ -12,8 +12,7 @@ fn main() {
 
     let payload = Payload::from_file(&shellcode, PayloadType::Shellcode);
 
-    match memfd(payload) {
-        Ok(res) => res,
-        Err(error) => panic!("An error occured: {error:?}"),
-    };
+    if let Err(e) = memfd(payload) {
+        panic!("An error occured: {e:?}");
+    }
 }
