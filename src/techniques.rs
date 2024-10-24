@@ -5,8 +5,7 @@ use nix::errno::Errno;
 use nix::sys::memfd::{memfd_create, MemFdCreateFlag};
 use nix::sys::ptrace;
 use nix::sys::wait::waitpid;
-use nix::unistd;
-use nix::unistd::{execve, fexecve, fork, ForkResult};
+use nix::unistd::{self, execve, fexecve, fork, ForkResult};
 
 use crate::elf::create_elf;
 use crate::utils::{get_env, str_to_vec_c_string};
