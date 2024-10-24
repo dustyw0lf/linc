@@ -8,5 +8,5 @@ repository = "https://github.com/dustyw0lf/libinject-linux"
 
 [dependencies]
 binary-layout = "4.0.2"
-nix = { version = "0.29", features = ["ptrace", "mqueue"] }
+nix = { version = "0.29", features = ["mqueue", "ptrace"] }
 ureq = "2.10.1"
