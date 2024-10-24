@@ -7,7 +7,7 @@ use nix::sys::wait::waitpid;
 use nix::unistd::{self, execve, fexecve, fork, ForkResult};
 
 use crate::elf::create_elf;
-use crate::error::Result;
+use crate::error::{Error, Result};
 use crate::utils::{get_env, str_to_vec_c_string};
 use crate::{Payload, PayloadType};
 
@@ -18,7 +18,9 @@ pub fn hollow(payload: Payload) -> Result<()> {
 
             match payload.payload_type {
                 PayloadType::Executable => {
-                    todo!()
+                    return Err(Error::NotImplemented(
+                        "hollow can not take executables".to_string(),
+                    ));
                 }
                 PayloadType::Shellcode => {
                     let regs = ptrace::getregs(child)?;
@@ -49,7 +51,7 @@ pub fn hollow(payload: Payload) -> Result<()> {
             execve(&target_c_string, target_args_slice, env_slice)?;
         }
 
-        Err(error) => println!("Fork failed: {}", error),
+        Err(error) => return Err(Error::LinuxError(error)),
     }
 
     Ok(())
