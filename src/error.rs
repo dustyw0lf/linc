@@ -13,23 +13,23 @@ pub enum Error {
 
 impl fmt::Display for Error {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        match self {
+        match *self {
             #[cfg(feature = "http")]
-            Error::HttpError(err) => write!(fmt, "{:?}", err),
+            Error::HttpError(ref err) => write!(fmt, "{:?}", err),
             Error::IO(ref err) => write!(fmt, "{:?}", err),
             Error::LinuxError(err) => write!(fmt, "{:?}: {}", err, err.desc()),
-            Error::NotImplemented(string) => write!(fmt, "not implemented: {}", string),
+            Error::NotImplemented(ref string) => write!(fmt, "not implemented: {}", string),
         }
     }
 }
 
 impl error::Error for Error {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        match self {
+        match *self {
             #[cfg(feature = "http")]
-            Error::HttpError(err) => Some(err),
+            Error::HttpError(ref err) => Some(err),
             Error::IO(ref err) => Some(err),
-            Error::LinuxError(err) => Some(err),
+            Error::LinuxError(ref err) => Some(err),
             Error::NotImplemented(_) => None,
         }
     }
