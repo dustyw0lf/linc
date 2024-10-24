@@ -7,16 +7,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in library 'libinject_linux'",
+            "name": "Debug unit tests in library 'linc'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
                     "--lib",
-                    "--package=libinject-linux"
+                    "--package=linc"
                 ],
                 "filter": {
-                    "name": "libinject_linux",
+                    "name": "linc",
                     "kind": "lib"
                 }
             },
@@ -31,7 +31,7 @@
                 "args": [
                     "build",
                     "--example=hollow_shellcode",
-                    "--package=libinject-linux"
+                    "--package=linc"
                 ],
                 "filter": {
                     "name": "hollow_shellcode",
@@ -50,7 +50,7 @@
                     "test",
                     "--no-run",
                     "--example=hollow_shellcode",
-                    "--package=libinject-linux"
+                    "--package=linc"
                 ],
                 "filter": {
                     "name": "hollow_shellcode",
@@ -68,7 +68,7 @@
                 "args": [
                     "build",
                     "--example=memfd_executable",
-                    "--package=libinject-linux"
+                    "--package=linc"
                 ],
                 "filter": {
                     "name": "memfd_executable",
@@ -87,7 +87,7 @@
                     "test",
                     "--no-run",
                     "--example=memfd_executable",
-                    "--package=libinject-linux"
+                    "--package=linc"
                 ],
                 "filter": {
                     "name": "memfd_executable",
@@ -105,7 +105,7 @@
                 "args": [
                     "build",
                     "--example=memfd_shellcode",
-                    "--package=libinject-linux"
+                    "--package=linc"
                 ],
                 "filter": {
                     "name": "memfd_shellcode",
@@ -124,7 +124,7 @@
                     "test",
                     "--no-run",
                     "--example=memfd_shellcode",
-                    "--package=libinject-linux"
+                    "--package=linc"
                 ],
                 "filter": {
                     "name": "memfd_shellcode",

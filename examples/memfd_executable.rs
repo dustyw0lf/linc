@@ -1,4 +1,4 @@
-use libinject_linux::{memfd, Payload, PayloadType};
+use linc::{memfd, Payload, PayloadType};
 
 fn main() {
     let payload = Payload::from_file("/usr/bin/ls", PayloadType::Executable).set_args("-l -a -h");

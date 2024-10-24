@@ -1,10 +1,10 @@
 [package]
-name = "libinject-linux"
+name = "linc"
 authors = ["dustyw0lf"]
 version = "0.1.0"
 edition = "2021"
 description = "Crate for process injection and fileless ELF execution on Linux."
-repository = "https://github.com/dustyw0lf/libinject-linux"
+repository = "https://github.com/dustyw0lf/linc"
 
 [features]
 default = ["http"]

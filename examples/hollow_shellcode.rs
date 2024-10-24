@@ -1,6 +1,6 @@
 use std::env::current_dir;
 
-use libinject_linux::{hollow, Payload, PayloadType};
+use linc::{hollow, Payload, PayloadType};
 
 fn main() {
     let path = current_dir().unwrap();

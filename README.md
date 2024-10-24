@@ -1,30 +1,38 @@
-# libinject-linux
-
-`libinject-linux` is a Rust crate containing implementations for process injection and fileless ELF execution techniques on Linux.
+# linc - Linux INjection Crate
+`linc` is a Rust crate containing implementations for process injection and fileless ELF execution techniques on Linux.
 
 ## Functionality
 The following techniques are currently implemented:
 - Using [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file in memory, write an ELF to it, and then execute.
 - Using [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to stop a forked process, overwrite its RIP register with shellcode, and then resume it.
 
-## Library Usage
-Add `libinject-linux` as a dependency to your Rust project
+## Usage
+Add `linc` as a dependency to your Rust project with default features enabled
 ```bash
-cargo add --git https://github.com/dustyw0lf/libinject-linux.git
+cargo add --git https://github.com/dustyw0lf/linc.git
 ```
 
-## Library Examples
+Add `linc` without default features
+```bash
+cargo add --git https://github.com/dustyw0lf/linc.git --no-default-features
+```
+
+## Features
+`linc` has the following features, enabled by default:
+- `http`: Adds functionality to download payloads over HTTP/S.
+
+## Examples
 >[!note]
 >The examples can take binaries or shellcode from either URLs or filesystem paths.
 
 Clone the repo
 ```bash
-git clone https://github.com/dustyw0lf/libinject-linux.git
+git clone https://github.com/dustyw0lf/linc.git
 ```
 
-Change directory into `libinject-linux`
+Change directory into `linc`
 ```bash
-cd libinject-linux
+cd linc
 ```
 
 ### memfd
