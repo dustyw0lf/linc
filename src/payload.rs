@@ -31,7 +31,9 @@ impl Payload {
         }
     }
 
-    pub fn from_file(path: &str, payload_type: PayloadType) -> Self {
+    pub fn from_file(path: impl Into<String>, payload_type: PayloadType) -> Self {
+        let path = path.into();
+
         Self {
             name: path.split('/').last().unwrap().to_string(),
             args: String::new(),
@@ -42,8 +44,10 @@ impl Payload {
         }
     }
 
-    pub fn from_url(url: &str, payload_type: PayloadType) -> Self {
-        let response = ureq::get(url)
+    pub fn from_url(url: impl Into<String>, payload_type: PayloadType) -> Self {
+        let url = url.into();
+
+        let response = ureq::get(&url)
             .call()
             .expect("Failed to download payload from server");
 
