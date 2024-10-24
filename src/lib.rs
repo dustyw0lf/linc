@@ -1,6 +1,7 @@
 // region:    --- Modules
 
 mod elf;
+mod error;
 mod payload;
 mod techniques;
 mod utils;
