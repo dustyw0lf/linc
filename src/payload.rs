@@ -2,6 +2,7 @@ use std::fs;
 
 // region:    --- Payload
 
+#[derive(Debug)]
 pub struct Payload {
     pub name: String,
     pub args: String,
@@ -11,6 +12,7 @@ pub struct Payload {
     pub target_args: String,
 }
 
+#[derive(Debug)]
 pub enum PayloadType {
     Executable,
     Shellcode,
