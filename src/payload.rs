@@ -43,12 +43,11 @@ impl Payload {
     }
 
     pub fn from_url(url: &str, payload_type: PayloadType) -> Self {
-        let mut payload_bytes: Vec<u8> = Vec::new();
-
         let response = ureq::get(url)
             .call()
             .expect("Failed to download payload from server");
 
+        let mut payload_bytes: Vec<u8> = Vec::new();
         response
             .into_reader()
             .read_to_end(&mut payload_bytes)
