@@ -44,6 +44,7 @@ impl Payload {
         }
     }
 
+    #[cfg(feature = "http")]
     pub fn from_url(url: impl Into<String>, payload_type: PayloadType) -> Self {
         let url = url.into();
 

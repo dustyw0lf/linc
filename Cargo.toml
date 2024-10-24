@@ -6,7 +6,11 @@ edition = "2021"
 description = "Crate for process injection and fileless ELF execution on Linux."
 repository = "https://github.com/dustyw0lf/libinject-linux"
 
+[features]
+default = ["http"]
+http = ["dep:ureq"]
+
 [dependencies]
 binary-layout = "4.0.2"
 nix = { version = "0.29", features = ["mqueue", "ptrace"] }
-ureq = "2.10.1"
+ureq = { version = "2.10.1", optional = true }
