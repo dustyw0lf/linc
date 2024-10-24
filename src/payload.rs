@@ -24,8 +24,8 @@ impl Payload {
         Self {
             name: String::new(),
             args: String::new(),
-            payload_type: payload_type,
-            bytes: bytes,
+            payload_type,
+            bytes,
             target: String::new(),
             target_args: String::new(),
         }
@@ -35,7 +35,7 @@ impl Payload {
         Self {
             name: path.split('/').last().unwrap().to_string(),
             args: String::new(),
-            payload_type: payload_type,
+            payload_type,
             bytes: fs::read(path).expect("Faild to open file"),
             target: String::new(),
             target_args: String::new(),
@@ -57,7 +57,7 @@ impl Payload {
         Self {
             name: url.split('/').last().unwrap().to_string(),
             args: String::new(),
-            payload_type: payload_type,
+            payload_type,
             bytes: payload_bytes,
             target: String::new(),
             target_args: String::new(),
