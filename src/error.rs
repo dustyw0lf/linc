@@ -1,4 +1,4 @@
-use std::ffi::NulError;
+use std::ffi::{FromVecWithNulError, NulError};
 use std::{error, fmt, io};
 
 pub type Result<T> = core::result::Result<T, Error>;
@@ -11,6 +11,7 @@ pub enum Error {
     LinuxError(nix::errno::Errno),
     NotImplemented(String),
     NulError(NulError),
+    FromVecWithNulError(FromVecWithNulError),
 }
 
 impl fmt::Display for Error {
@@ -22,6 +23,7 @@ impl fmt::Display for Error {
             Error::LinuxError(err) => write!(f, "{:?}: {}", err, err.desc()),
             Error::NotImplemented(ref string) => write!(f, "not implemented: {}", string),
             Error::NulError(ref err) => write!(f, "{}", err),
+            Error::FromVecWithNulError(ref err) => write!(f, "{}", err),
         }
     }
 }
@@ -35,6 +37,7 @@ impl error::Error for Error {
             Error::LinuxError(ref err) => Some(err),
             Error::NotImplemented(_) => None,
             Error::NulError(ref err) => Some(err),
+            Error::FromVecWithNulError(ref err) => Some(err),
         }
     }
 }
@@ -61,5 +64,11 @@ impl From<nix::errno::Errno> for Error {
 impl From<NulError> for Error {
     fn from(err: NulError) -> Self {
         Error::NulError(err)
+    }
+}
+
+impl From<FromVecWithNulError> for Error {
+    fn from(err: FromVecWithNulError) -> Self {
+        Error::FromVecWithNulError(err)
     }
 }
