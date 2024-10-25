@@ -1,3 +1,4 @@
+use std::ffi::NulError;
 use std::{error, fmt, io};
 
 pub type Result<T> = core::result::Result<T, Error>;
@@ -9,16 +10,18 @@ pub enum Error {
     IO(io::Error),
     LinuxError(nix::errno::Errno),
     NotImplemented(String),
+    NulError(NulError),
 }
 
 impl fmt::Display for Error {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             #[cfg(feature = "http")]
-            Error::HttpError(ref err) => write!(fmt, "{:?}", err),
-            Error::IO(ref err) => write!(fmt, "{:?}", err),
-            Error::LinuxError(err) => write!(fmt, "{:?}: {}", err, err.desc()),
-            Error::NotImplemented(ref string) => write!(fmt, "not implemented: {}", string),
+            Error::HttpError(ref err) => write!(f, "{:?}", err),
+            Error::IO(ref err) => write!(f, "{:?}", err),
+            Error::LinuxError(err) => write!(f, "{:?}: {}", err, err.desc()),
+            Error::NotImplemented(ref string) => write!(f, "not implemented: {}", string),
+            Error::NulError(ref err) => write!(f, "{}", err),
         }
     }
 }
@@ -31,6 +34,7 @@ impl error::Error for Error {
             Error::IO(ref err) => Some(err),
             Error::LinuxError(ref err) => Some(err),
             Error::NotImplemented(_) => None,
+            Error::NulError(ref err) => Some(err),
         }
     }
 }
@@ -51,5 +55,11 @@ impl From<io::Error> for Error {
 impl From<nix::errno::Errno> for Error {
     fn from(err: nix::errno::Errno) -> Self {
         Error::LinuxError(err)
+    }
+}
+
+impl From<NulError> for Error {
+    fn from(err: NulError) -> Self {
+        Error::NulError(err)
     }
 }
