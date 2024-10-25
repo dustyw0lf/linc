@@ -6,6 +6,7 @@ edition = "2021"
 description = "A Crate for process injection and fileless ELF execution on Linux."
 repository = "https://github.com/dustyw0lf/linc"
 keywords = ["linux"]
+include = ["src", "Cargo.toml", "README.md"]
 
 [features]
 default = ["http"]
