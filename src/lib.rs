@@ -10,7 +10,7 @@ mod utils;
 
 // region:    --- Public API
 
-pub use payload::{Payload, PayloadType};
+pub use payload::{Payload, PayloadResultExt, PayloadType};
 pub use techniques::{hollow, memfd};
 
 // endregion: --- Public API

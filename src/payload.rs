@@ -84,4 +84,26 @@ impl Payload {
     }
 }
 
+// Extension trait for Result<Payload>
+pub trait PayloadResultExt {
+    fn set_args(self, args: &str) -> Result<Payload>;
+    fn set_target(self, target: &str) -> Result<Payload>;
+    fn set_target_args(self, target_args: &str) -> Result<Payload>;
+}
+
+// Implement the extension methods for Result<Payload>
+impl PayloadResultExt for Result<Payload> {
+    fn set_args(self, args: &str) -> Result<Payload> {
+        self.map(|payload| payload.set_args(args))
+    }
+
+    fn set_target(self, target: &str) -> Result<Payload> {
+        self.map(|payload| payload.set_target(target))
+    }
+
+    fn set_target_args(self, target_args: &str) -> Result<Payload> {
+        self.map(|payload| payload.set_target_args(target_args))
+    }
+}
+
 // endregion: --- Payload
