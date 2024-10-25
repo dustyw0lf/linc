@@ -1,5 +1,7 @@
 use std::fs;
 
+use crate::error::Result;
+
 // region:    --- Payload
 
 #[derive(Debug)]
@@ -31,41 +33,36 @@ impl Payload {
         }
     }
 
-    pub fn from_file(path: impl Into<String>, payload_type: PayloadType) -> Self {
+    pub fn from_file(path: impl Into<String>, payload_type: PayloadType) -> Result<Self> {
         let path = path.into();
 
-        Self {
+        Ok(Self {
             name: path.split('/').last().unwrap().to_string(),
             args: String::new(),
             payload_type,
             bytes: fs::read(path).expect("Faild to open file"),
             target: String::new(),
             target_args: String::new(),
-        }
+        })
     }
 
     #[cfg(feature = "http")]
-    pub fn from_url(url: impl Into<String>, payload_type: PayloadType) -> Self {
+    pub fn from_url(url: impl Into<String>, payload_type: PayloadType) -> Result<Self> {
         let url = url.into();
 
-        let response = ureq::get(&url)
-            .call()
-            .expect("Failed to download payload from server");
+        let response = ureq::get(&url).call()?;
 
         let mut payload_bytes: Vec<u8> = Vec::new();
-        response
-            .into_reader()
-            .read_to_end(&mut payload_bytes)
-            .expect("Failed to read payload bytes");
+        response.into_reader().read_to_end(&mut payload_bytes)?;
 
-        Self {
-            name: url.split('/').last().unwrap().to_string(),
+        Ok(Self {
+            name: url.split('/').last().unwrap_or("").to_string(),
             args: String::new(),
             payload_type,
             bytes: payload_bytes,
             target: String::new(),
             target_args: String::new(),
-        }
+        })
     }
 }
 
