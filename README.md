@@ -1,4 +1,4 @@
-# linc - Linux INjection Crate
+# LINC - Linux INjection Crate
 `linc` is a Rust crate containing implementations for process injection and fileless ELF execution techniques on Linux.
 
 ## Functionality
