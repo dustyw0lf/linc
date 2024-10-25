@@ -76,7 +76,13 @@ pub fn memfd(payload: Payload) -> Result<()> {
     let env = get_env()?;
     let env_slice = env.as_slice();
 
-    fexecve(fd.as_raw_fd(), args_slice, env_slice)?;
+    match unsafe { fork() } {
+        Ok(ForkResult::Parent { child: _ }) => {}
+        Ok(ForkResult::Child) => {
+            fexecve(fd.as_raw_fd(), args_slice, env_slice)?;
+        }
+        Err(error) => return Err(Error::LinuxError(error)),
+    }
 
     Ok(())
 }
