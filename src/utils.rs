@@ -2,8 +2,9 @@ use std::env;
 use std::ffi::{CString, OsString};
 use std::os::unix::ffi::OsStringExt;
 
-pub fn get_env() -> Vec<CString> {
-    // Source: https://github.com/io12/userland-execve-rust/blob/main/src/main.rs
+use crate::error::{Error, Result};
+
+pub fn get_env() -> Result<Vec<CString>> {
     env::vars_os()
         .map(|(key, val)| {
             [key, OsString::from("="), val]
@@ -14,17 +15,15 @@ pub fn get_env() -> Vec<CString> {
         .collect()
 }
 
-fn os_string_to_c_string(string: OsString) -> CString {
-    // Source: https://github.com/io12/userland-execve-rust/blob/main/src/main.rs
+fn os_string_to_c_string(string: OsString) -> Result<CString> {
     let mut vector = string.into_vec();
     vector.push(0);
-    CString::from_vec_with_nul(vector).unwrap()
+    CString::from_vec_with_nul(vector).map_err(|e| Error::FromVecWithNulError(e))
 }
 
-pub fn str_to_vec_c_string(string: &str) -> Vec<CString> {
-    let string_vec: Vec<CString> = string
+pub fn str_to_vec_c_string(string: &str) -> Result<Vec<CString>> {
+    string
         .split_whitespace()
-        .map(|x| CString::new(x).unwrap())
-        .collect();
-    string_vec
+        .map(|x| CString::new(x).map_err(|e| Error::NulError(e)))
+        .collect()
 }
