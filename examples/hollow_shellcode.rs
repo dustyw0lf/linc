@@ -1,6 +1,6 @@
 use std::env::current_dir;
 
-use linc::{hollow, Payload, PayloadType};
+use linc::{hollow, Payload, PayloadResultExt, PayloadType};
 
 fn main() {
     let path = current_dir().unwrap();
@@ -14,7 +14,13 @@ fn main() {
         .set_target("/usr/bin/yes")
         .set_target_args("YES");
 
-    if let Err(e) = hollow(payload) {
-        eprintln!("An error occured: {:?}", e);
+    // Check if the payload was created successfully
+    if let Err(e) = payload {
+        eprintln!("Failed to create payload: {:?}", e);
+        return;
+    }
+
+    if let Err(e) = hollow(payload.unwrap()) {
+        eprintln!("An error occurred: {:?}", e);
     }
 }

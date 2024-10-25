@@ -12,7 +12,13 @@ fn main() {
 
     let payload = Payload::from_file(&shellcode, PayloadType::Shellcode);
 
-    if let Err(e) = memfd(payload) {
-        eprintln!("An error occured: {:?}", e);
+    // Check if the payload was created successfully
+    if let Err(e) = payload {
+        eprintln!("Failed to create payload: {:?}", e);
+        return;
+    }
+
+    if let Err(e) = memfd(payload.unwrap()) {
+        eprintln!("An error occurred: {:?}", e);
     }
 }
