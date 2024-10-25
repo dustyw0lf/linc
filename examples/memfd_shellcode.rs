@@ -13,6 +13,6 @@ fn main() {
     let payload = Payload::from_file(&shellcode, PayloadType::Shellcode);
 
     if let Err(e) = memfd(payload) {
-        panic!("An error occured: {e:?}");
+        eprintln!("An error occured: {:?}", e);
     }
 }

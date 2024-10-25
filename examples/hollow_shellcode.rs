@@ -15,6 +15,6 @@ fn main() {
         .set_target_args("YES");
 
     if let Err(e) = hollow(payload) {
-        panic!("An error occured: {e:?}");
+        eprintln!("An error occured: {:?}", e);
     }
 }
