@@ -42,10 +42,10 @@ pub fn hollow(payload: Payload) -> Result<()> {
 
             let target_c_string = CString::new(payload.target).unwrap();
 
-            let target_args = str_to_vec_c_string(&payload.target_args);
+            let target_args = str_to_vec_c_string(&payload.target_args)?;
             let target_args_slice = target_args.as_slice();
 
-            let env = get_env();
+            let env = get_env()?;
             let env_slice = env.as_slice();
 
             execve(&target_c_string, target_args_slice, env_slice)?;
@@ -70,10 +70,10 @@ pub fn memfd(payload: Payload) -> Result<()> {
 
     unistd::write(&fd, &bytes)?;
 
-    let args = str_to_vec_c_string(&payload.args);
+    let args = str_to_vec_c_string(&payload.args)?;
     let args_slice = args.as_slice();
 
-    let env = get_env();
+    let env = get_env()?;
     let env_slice = env.as_slice();
 
     fexecve(fd.as_raw_fd(), args_slice, env_slice)?;
