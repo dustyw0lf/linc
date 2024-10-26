@@ -1,6 +1,9 @@
 use std::env::current_dir;
 
-use linc::{hollow, Payload, PayloadResultExt, PayloadType};
+use linc::{
+    payload::{Payload, PayloadResultExt, PayloadType},
+    techniques::hollow,
+};
 
 fn main() {
     let path = current_dir().unwrap();

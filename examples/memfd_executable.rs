@@ -1,4 +1,7 @@
-use linc::{memfd, Payload, PayloadResultExt, PayloadType};
+use linc::{
+    payload::{Payload, PayloadResultExt, PayloadType},
+    techniques::memfd,
+};
 
 fn main() {
     let payload = Payload::from_file("/usr/bin/ls", PayloadType::Executable).set_args("-l -a -h");
