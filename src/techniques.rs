@@ -59,6 +59,24 @@ pub fn hollow(payload: Payload) -> Result<()> {
     Ok(())
 }
 
+/// Uses `memfd_create(2)` to create an anonymous file in memory,
+/// writes the payload to it, and executes it. Shellcode is converted to an ELF
+/// before being executed.
+///
+/// # Examples
+///
+/// ```no_run
+/// use linc::{
+///     payload::{Payload, PayloadType},
+///     techniques::memfd,
+/// };
+///
+/// // Execute an ELF file
+/// let payload = Payload::from_file("/usr/bin/ls", PayloadType::Executable)?
+///     .set_args("-l -a -h");
+/// memfd(payload)?;
+/// # Ok::<(), linc::error::Error>(())
+/// ```
 pub fn memfd(payload: Payload) -> Result<()> {
     let anon_file_name = CString::new("").unwrap();
     let p_file_name = anon_file_name.as_c_str();
