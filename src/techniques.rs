@@ -1,3 +1,5 @@
+//! Implements various process injection and fileless ELF execution techniques.
+
 use std::ffi::{c_void, CString};
 use std::os::fd::AsRawFd;
 
