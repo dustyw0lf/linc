@@ -1,3 +1,4 @@
+//! A unified error type and a matching Result type
 use std::ffi::{FromVecWithNulError, NulError};
 use std::{error, fmt, io};
 
