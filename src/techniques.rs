@@ -13,6 +13,43 @@ use crate::error::{Error, Result};
 use crate::payload::{Payload, PayloadType};
 use crate::utils::{get_env, str_to_vec_c_string};
 
+/// Uses [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to inject shellcode into a sacrificial process.
+/// Only works with shellcode payloads.
+///
+/// # Examples
+///
+/// ```no_run
+/// use linc::{
+///     payload::{Payload, PayloadResultExt, PayloadType},
+///     techniques::hollow,
+/// };
+///
+/// fn main() {
+///     let shellcode = vec![/* bytes */];
+///
+///     let payload = Payload::from_bytes(shellcode, PayloadType::Shellcode)
+///         .set_target("/usr/bin/yes")
+///         .set_target_args("YES");
+///
+///     // Check if the payload was created successfully
+///     if let Err(e) = payload {
+///         eprintln!("Failed to create payload: {:?}", e);
+///         return;
+///     }
+///
+///     // Execute the payload using hollow
+///     if let Err(e) = hollow(payload.unwrap()) {
+///         eprintln!("An error occurred: {:?}", e);
+///     }
+/// }
+/// ```
+///
+/// # Errors
+///
+/// Returns an error if:
+/// - The payload type is `Executable` (only shellcode is supported)
+/// - Process creation or manipulation fails
+/// - Memory operations fail
 pub fn hollow(payload: Payload) -> Result<()> {
     match unsafe { fork() } {
         Ok(ForkResult::Parent { child, .. }) => {
@@ -59,7 +96,7 @@ pub fn hollow(payload: Payload) -> Result<()> {
     Ok(())
 }
 
-/// Uses `memfd_create(2)` to create an anonymous file in memory,
+/// Uses [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file in memory,
 /// writes the payload to it, and executes it. Shellcode is converted to an ELF
 /// before being executed.
 ///
@@ -67,15 +104,25 @@ pub fn hollow(payload: Payload) -> Result<()> {
 ///
 /// ```no_run
 /// use linc::{
-///     payload::{Payload, PayloadType},
+///     payload::{Payload, PayloadResultExt, PayloadType},
 ///     techniques::memfd,
 /// };
 ///
-/// // Execute an ELF file
-/// let payload = Payload::from_file("/usr/bin/ls", PayloadType::Executable)?
-///     .set_args("-l -a -h");
-/// memfd(payload)?;
-/// # Ok::<(), linc::error::Error>(())
+/// fn main() {
+///     let payload = Payload::from_file("/usr/bin/ls", PayloadType::Executable)
+///         .set_args("-l -a -h");
+///
+///     // Check if the payload was created successfully
+///     if let Err(e) = payload {
+///        eprintln!("Failed to create payload: {:?}", e);
+///         return;
+///    }
+///
+///     // Execute the payload using memfd
+///     if let Err(e) = memfd(payload.unwrap()) {
+///         eprintln!("An error occurred: {:?}", e);
+///     }
+/// }
 /// ```
 pub fn memfd(payload: Payload) -> Result<()> {
     let anon_file_name = CString::new("").unwrap();
