@@ -32,18 +32,6 @@ binary_layout!(elf64_ident, LittleEndian, {
     pad: [u8; 7],
 });
 
-#[cfg(test)]
-mod tests {
-    use super::elf64_ident;
-
-    #[test]
-    fn ident_size_ok() {
-        // XXX: could be a static assertion but Option<>::unwrap() is not a
-        // const_fn
-        assert_eq!(16, elf64_ident::SIZE.unwrap());
-    }
-}
-
 fn set_ident<S: AsRef<[u8]> + AsMut<[u8]>>(mut view: elf64_ident::View<S>) {
     view.mag_mut()
         .copy_from_slice(&[0x7f, 'E' as u8, 'L' as u8, 'F' as u8]);
@@ -144,4 +132,28 @@ pub fn create_elf(program: &[u8]) -> Vec<u8> {
     set_elf64_phdr(file.phdr_mut(), program.len() as u64);
     file.program_mut().copy_from_slice(program);
     buf
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn ident_size_ok() {
+        // XXX: could be a static assertion but Option<>::unwrap() is not a
+        // const_fn
+        assert_eq!(16, elf64_ident::SIZE.unwrap());
+    }
+
+    #[test]
+    fn test_elf_creation() {
+        let shellcode = &[0x90, 0x90, 0x90]; // NOP sled
+        let elf = crate::elf::create_elf(shellcode);
+
+        // Verify ELF magic number
+        assert_eq!(&elf[0..4], &[0x7f, b'E', b'L', b'F']);
+
+        // Verify architecture
+        assert_eq!(elf[4], 2); // ELFCLASS64
+    }
 }
