@@ -26,15 +26,15 @@ pub enum PayloadType {
 
 // Constructors
 impl Payload {
-    pub fn from_bytes(bytes: Vec<u8>, payload_type: PayloadType) -> Self {
-        Self {
+    pub fn from_bytes(bytes: Vec<u8>, payload_type: PayloadType) -> Result<Self> {
+        Ok(Self {
             name: String::new(),
             args: String::new(),
             payload_type,
             bytes,
             target: String::new(),
             target_args: String::new(),
-        }
+        })
     }
 
     pub fn from_file(path: impl Into<String>, payload_type: PayloadType) -> Result<Self> {
