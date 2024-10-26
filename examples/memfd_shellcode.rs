@@ -1,9 +1,7 @@
 use std::env::current_dir;
 
-use linc::{
-    payload::{Payload, PayloadType},
-    techniques::memfd,
-};
+use linc::payload::{Payload, PayloadType};
+use linc::techniques::memfd;
 
 fn main() {
     let path = current_dir().unwrap();
