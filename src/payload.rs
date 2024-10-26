@@ -88,7 +88,13 @@ impl Payload {
     }
 }
 
-// Extension trait for Result<Payload>
+/// Extension trait for `Result<Payload>` that provides chainable configuration methods.
+///
+/// This trait allows for payload configuration even when the payload creation
+/// might fail. It provides the same configuration methods as `Payload` but works on
+/// `Result<Payload>` directly, making it easier to chain operations without explicit
+/// error handling.
+
 pub trait PayloadResultExt {
     fn set_args(self, args: &str) -> Result<Payload>;
     fn set_target(self, target: &str) -> Result<Payload>;
