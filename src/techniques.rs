@@ -8,8 +8,8 @@ use nix::unistd::{self, execve, fexecve, fork, ForkResult};
 
 use crate::elf::create_elf;
 use crate::error::{Error, Result};
+use crate::payload::{Payload, PayloadType};
 use crate::utils::{get_env, str_to_vec_c_string};
-use crate::{Payload, PayloadType};
 
 pub fn hollow(payload: Payload) -> Result<()> {
     match unsafe { fork() } {
