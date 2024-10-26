@@ -6,12 +6,11 @@ use crate::error::{Error, Result};
 
 pub fn get_env() -> Result<Vec<CString>> {
     env::vars_os()
-        .map(|(key, val)| {
-            [key, OsString::from("="), val]
-                .into_iter()
-                .collect::<OsString>()
+        .map(|(mut key, val)| {
+            key.push("=");
+            key.push(val);
+            os_string_to_c_string(key)
         })
-        .map(os_string_to_c_string)
         .collect()
 }
 
