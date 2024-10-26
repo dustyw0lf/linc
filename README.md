@@ -62,6 +62,12 @@ Run the hollow example with shellcode
 cargo run --example hollow_shellcode
 ```
 
+## Testing
+Run tests
+```bash
+cargo test
+```
+
 ## Documentation
 Build the documentation
 ```bash
