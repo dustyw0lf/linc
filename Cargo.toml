@@ -9,7 +9,7 @@ keywords = ["linux"]
 include = ["src", "Cargo.toml", "README.md"]
 
 [features]
-default = ["http"]
+default = []
 http = ["dep:ureq"]
 
 [dependencies]
