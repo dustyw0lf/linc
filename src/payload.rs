@@ -5,6 +5,27 @@ use crate::error::Result;
 
 // region:    --- Payload
 
+/// Represents an executable payload that can be either a complete ELF executable
+/// or raw shellcode.
+///
+/// # Examples
+///
+/// Creating a payload from an executable file:
+/// ```no_run
+/// use linc::payload::{Payload, PayloadType};
+///
+/// let payload = Payload::from_file("/usr/bin/ls", PayloadType::Executable)?
+///     .set_args("-la");
+/// # Ok::<(), linc::error::Error>(())
+/// ```
+///
+/// Creating a payload from shellcode:
+/// ```
+/// use linc::payload::{Payload, PayloadType};
+///
+/// let shellcode_bytes = vec![/* bytes */];
+/// let payload = Payload::from_bytes(shellcode_bytes, PayloadType::Shellcode);
+/// ```
 #[derive(Debug)]
 pub struct Payload {
     pub name: String,
