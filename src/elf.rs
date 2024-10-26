@@ -146,7 +146,7 @@ mod tests {
     }
 
     #[test]
-    fn test_elf_creation() {
+    fn test_create_elf() {
         let shellcode = &[0x90, 0x90, 0x90]; // NOP sled
         let elf = crate::elf::create_elf(shellcode);
 
