@@ -3,7 +3,7 @@
 //!
 //! # Features
 //!
-//! - `http` (default): Enables payload downloads via HTTP/S.
+//! - `http`: Enables payload downloads via HTTP/S.
 
 // region:    --- Modules
 
