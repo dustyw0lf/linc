@@ -19,8 +19,8 @@ use crate::utils::{get_env, str_to_vec_c_string};
 /// # Examples
 ///
 /// ```no_run
-/// use linc::payload::{Payload, PayloadType};
-/// use linc::techniques::memfd;
+/// use linc::payload::{Payload, PayloadResultExt, PayloadType};
+/// use linc::techniques::hollow;
 ///
 /// fn main() {
 ///     let shellcode = vec![/* bytes */];
@@ -101,7 +101,7 @@ pub fn hollow(payload: Payload) -> Result<()> {
 /// # Examples
 ///
 /// ```no_run
-/// use linc::payload::{Payload, PayloadType};
+/// use linc::payload::{Payload, PayloadResultExt, PayloadType};
 /// use linc::techniques::memfd;
 ///
 /// fn main() {
