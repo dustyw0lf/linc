@@ -1,3 +1,4 @@
+//! Defines types and implementations for working with executable payloads.
 use std::fs;
 
 use crate::error::Result;
