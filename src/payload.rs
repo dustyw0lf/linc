@@ -94,7 +94,6 @@ impl Payload {
 /// might fail. It provides the same configuration methods as `Payload` but works on
 /// `Result<Payload>` directly, making it easier to chain operations without explicit
 /// error handling.
-
 pub trait PayloadResultExt {
     fn set_args(self, args: &str) -> Result<Payload>;
     fn set_target(self, target: &str) -> Result<Payload>;
