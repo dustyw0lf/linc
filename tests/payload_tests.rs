@@ -5,6 +5,13 @@ use linc::payload::{Payload, PayloadType};
 use tempfile::NamedTempFile;
 
 #[test]
+fn test_payload_from_bytes() {
+    let test_bytes = vec![0x90, 0x90, 0x90]; // NOP sled
+    let payload = Payload::from_bytes(test_bytes.clone(), PayloadType::Shellcode).unwrap();
+    assert_eq!(payload.bytes, test_bytes);
+}
+
+#[test]
 fn test_payload_from_file() {
     let test_binary: &[u8] = &[
         0x7f, 0x45, 0x4c, 0x46, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -29,13 +36,6 @@ fn test_payload_from_file() {
 
     assert_eq!(payload.name, bin_name);
     assert_eq!(payload.bytes, bin_bytes);
-}
-
-#[test]
-fn test_payload_from_bytes() {
-    let test_bytes = vec![0x90, 0x90, 0x90]; // NOP sled
-    let payload = Payload::from_bytes(test_bytes.clone(), PayloadType::Shellcode).unwrap();
-    assert_eq!(payload.bytes, test_bytes);
 }
 
 #[cfg(feature = "http")]
