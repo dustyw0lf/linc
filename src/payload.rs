@@ -36,6 +36,7 @@ pub struct Payload {
     pub target_args: String,
 }
 
+/// Specifies the type of payload being used.
 #[derive(Debug)]
 pub enum PayloadType {
     Executable,
