@@ -65,7 +65,7 @@ cargo run --example hollow_shellcode
 ## Documentation
 Build the documentation
 ```bash
-cargo doc
+cargo doc --no-deps
 ```
 
 The documentation will be in `target/doc/linc/index.html`.
