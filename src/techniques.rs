@@ -8,10 +8,10 @@ use nix::sys::ptrace;
 use nix::sys::wait::waitpid;
 use nix::unistd::{self, execve, fexecve, fork, ForkResult};
 
-use crate::elf::create_elf;
 use crate::error::{Error, Result};
 use crate::payload::{Payload, PayloadType};
 use crate::utils::{get_env, str_to_vec_c_string};
+use exeutils::elf64;
 
 /// Uses [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to inject shellcode into a sacrificial process.
 /// Only works with shellcode payloads.
@@ -128,7 +128,7 @@ pub fn memfd(payload: Payload) -> Result<()> {
 
     let bytes = match payload.payload_type {
         PayloadType::Executable => payload.bytes,
-        PayloadType::Shellcode => create_elf(&payload.bytes),
+        PayloadType::Shellcode => elf64::shellcode_to_exe(&payload.bytes),
     };
 
     unistd::write(&fd, &bytes)?;
