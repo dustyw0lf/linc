@@ -22,9 +22,6 @@ cargo add --git https://github.com/dustyw0lf/linc.git --features http
 - `http`: Adds functionality to download payloads over HTTP/S.
 
 ## Examples
->[!note]
->The examples can take binaries or shellcode from either URLs or filesystem paths.
-
 Clone the repo
 ```bash
 git clone https://github.com/dustyw0lf/linc.git
