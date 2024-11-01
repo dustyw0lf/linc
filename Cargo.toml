@@ -28,4 +28,5 @@ linc = { path = ".", features = ["http"] }
 enum_glob_use = "deny"
 pedantic = { level = "deny", priority = -1 }
 unwrap_used = "warn"
+must_use_candidate = "allow"
 return_self_not_must_use = "allow"
