@@ -26,6 +26,27 @@ pub enum PayloadType {
 
 // Constructors
 impl Payload {
+    /// Creates a new payload from a byte vector.
+    ///
+    /// The bytes can represent either a complete ELF executable or raw shellcode, as specified by
+    /// the `payload_type` parameter.
+    ///
+    /// # Errors
+    /// Currently infallible, but returns `Result` for consistency with other constructors.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use linc::payload::{Payload, PayloadType};
+    ///
+    /// // Create a payload from shellcode bytes
+    /// let shellcode = vec![0x90, 0x90, 0x90];  // NOP sled
+    /// let payload = Payload::from_bytes(shellcode, PayloadType::Shellcode).unwrap();
+    ///
+    /// // Create a payload from an ELF executable's bytes
+    /// let elf_bytes = vec![/* ... */];  // ELF file contents
+    /// let payload = Payload::from_bytes(elf_bytes, PayloadType::Executable).unwrap();
+    /// ```
     pub fn from_bytes(bytes: Vec<u8>, payload_type: PayloadType) -> Result<Self> {
         Ok(Self {
             name: String::new(),
@@ -37,12 +58,27 @@ impl Payload {
         })
     }
 
-    /// Creates a new payload by reading a file.
+    /// Creates a new payload by reading from a file.
+    ///
+    /// The file can contain either a complete ELF executable or raw shellcode, as specified by
+    /// the `payload_type` parameter.
     ///
     /// # Errors
     /// Returns an error if:
     /// - The file cannot be read
     /// - The file path contains invalid UTF-8 characters
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use linc::payload::{Payload, PayloadType};
+    ///
+    /// // Load a shellcode file
+    /// let payload = Payload::from_file("shellcode.bin", PayloadType::Shellcode).unwrap();
+    ///
+    /// // Load an existing ELF executable
+    /// let payload = Payload::from_file("/usr/bin/ls", PayloadType::Executable).unwrap();
+    /// ```
     pub fn from_file(path: impl Into<String>, payload_type: PayloadType) -> Result<Self> {
         let path = path.into();
 
@@ -57,10 +93,34 @@ impl Payload {
     }
 
     #[cfg(feature = "http")]
-    /// Creates a new payload from a byte vector.
+    /// Creates a new payload by downloading from a URL.
+    ///
+    /// The downloaded content can be either a complete ELF executable or raw shellcode, as specified by
+    /// the `payload_type` parameter.
     ///
     /// # Errors
-    /// Currently infallible, but returns `Result` for consistency with other constructors.
+    /// Returns an error if:
+    /// - The URL is invalid or unreachable
+    /// - The network request fails
+    /// - Reading the response body fails
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use linc::payload::{Payload, PayloadType};
+    ///
+    /// // Download and load an ELF executable
+    /// let payload = Payload::from_url(
+    ///     "http://example.com/executable",
+    ///     PayloadType::Executable
+    /// ).unwrap();
+    ///
+    /// // Download and load shellcode
+    /// let payload = Payload::from_url(
+    ///     "http://example.com/shellcode.bin",
+    ///     PayloadType::Shellcode
+    /// ).unwrap();
+    /// ```
     pub fn from_url(url: impl Into<String>, payload_type: PayloadType) -> Result<Self> {
         let url = url.into();
 
