@@ -117,7 +117,7 @@ pub fn hollow(payload: Payload) -> Result<()> {
 /// }
 /// ```
 pub fn memfd(payload: Payload) -> Result<()> {
-    let anon_file_name = CString::new("").unwrap();
+    let anon_file_name = CString::new("")?;
     let p_file_name = anon_file_name.as_c_str();
 
     let fd = memfd_create(p_file_name, MemFdCreateFlag::MFD_CLOEXEC)?;
