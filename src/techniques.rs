@@ -22,23 +22,21 @@ use exeutils::elf64;
 /// use linc::payload::{Payload, PayloadResultExt, PayloadType};
 /// use linc::techniques::hollow;
 ///
-/// fn main() {
-///     let shellcode = vec![/* bytes */];
+/// let shellcode = vec![/* bytes */];
 ///
-///     let payload = Payload::from_bytes(shellcode, PayloadType::Shellcode)
-///         .set_target("/usr/bin/yes")
-///         .set_target_args("YES");
+/// let payload = Payload::from_bytes(shellcode, PayloadType::Shellcode)
+///     .set_target("/usr/bin/yes")
+///     .set_target_args("YES");
 ///
-///     // Check if the payload was created successfully
-///     if let Err(e) = payload {
-///         eprintln!("Failed to create payload: {:?}", e);
-///         return;
-///     }
+/// // Check if the payload was created successfully
+/// if let Err(e) = payload {
+///     eprintln!("Failed to create payload: {:?}", e);
+///     return;
+/// }
 ///
-///     // Execute the payload using hollow
-///     if let Err(e) = hollow(payload.unwrap()) {
-///         eprintln!("An error occurred: {:?}", e);
-///     }
+/// // Execute the payload using hollow
+/// if let Err(e) = hollow(payload.unwrap()) {
+///     eprintln!("An error occurred: {:?}", e);
 /// }
 /// ```
 ///
@@ -104,20 +102,18 @@ pub fn hollow(payload: Payload) -> Result<()> {
 /// use linc::payload::{Payload, PayloadResultExt, PayloadType};
 /// use linc::techniques::memfd;
 ///
-/// fn main() {
-///     let payload = Payload::from_file("/usr/bin/ls", PayloadType::Executable)
-///         .set_args("-l -a -h");
+/// let payload = Payload::from_file("/usr/bin/ls", PayloadType::Executable)
+///     .set_args("-l -a -h");
 ///
-///     // Check if the payload was created successfully
-///     if let Err(e) = payload {
-///        eprintln!("Failed to create payload: {:?}", e);
-///         return;
-///    }
+/// // Check if the payload was created successfully
+/// if let Err(e) = payload {
+///     eprintln!("Failed to create payload: {:?}", e);
+///     return;
+/// }
 ///
-///     // Execute the payload using memfd
-///     if let Err(e) = memfd(payload.unwrap()) {
-///         eprintln!("An error occurred: {:?}", e);
-///     }
+/// // Execute the payload using memfd
+/// if let Err(e) = memfd(payload.unwrap()) {
+///     eprintln!("An error occurred: {:?}", e);
 /// }
 /// ```
 pub fn memfd(payload: Payload) -> Result<()> {
