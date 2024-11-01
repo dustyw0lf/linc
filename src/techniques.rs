@@ -63,7 +63,7 @@ pub fn hollow(payload: Payload) -> Result<()> {
                     let mut addr = regs.rip;
 
                     for byte in &payload.bytes {
-                        ptrace::write(child, addr as *mut c_void, *byte as i64)?;
+                        ptrace::write(child, addr as *mut c_void, i64::from(*byte))?;
                         addr += 1;
                     }
 
