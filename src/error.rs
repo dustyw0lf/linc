@@ -19,12 +19,12 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             #[cfg(feature = "http")]
-            Error::HttpError(ref err) => write!(f, "{:?}", err),
-            Error::IO(ref err) => write!(f, "{:?}", err),
+            Error::HttpError(ref err) => write!(f, "{err:?}"),
+            Error::IO(ref err) => write!(f, "{err:?}"),
             Error::Linux(err) => write!(f, "{:?}: {}", err, err.desc()),
-            Error::NotImplemented(ref string) => write!(f, "not implemented: {}", string),
+            Error::NotImplemented(ref string) => write!(f, "not implemented: {string}"),
             Error::Nul(ref err) => write!(f, "{}", err),
-            Error::FromVecWithNul(ref err) => write!(f, "{}", err),
+            Error::FromVecWithNul(ref err) => write!(f, "{err}"),
         }
     }
 }
