@@ -9,10 +9,10 @@ pub enum Error {
     #[cfg(feature = "http")]
     HttpError(ureq::Error),
     IO(io::Error),
-    LinuxError(nix::errno::Errno),
+    Linux(nix::errno::Errno),
     NotImplemented(String),
-    NulError(NulError),
-    FromVecWithNulError(FromVecWithNulError),
+    Nul(NulError),
+    FromVecWithNul(FromVecWithNulError),
 }
 
 impl fmt::Display for Error {
@@ -21,10 +21,10 @@ impl fmt::Display for Error {
             #[cfg(feature = "http")]
             Error::HttpError(ref err) => write!(f, "{:?}", err),
             Error::IO(ref err) => write!(f, "{:?}", err),
-            Error::LinuxError(err) => write!(f, "{:?}: {}", err, err.desc()),
+            Error::Linux(err) => write!(f, "{:?}: {}", err, err.desc()),
             Error::NotImplemented(ref string) => write!(f, "not implemented: {}", string),
-            Error::NulError(ref err) => write!(f, "{}", err),
-            Error::FromVecWithNulError(ref err) => write!(f, "{}", err),
+            Error::Nul(ref err) => write!(f, "{}", err),
+            Error::FromVecWithNul(ref err) => write!(f, "{}", err),
         }
     }
 }
@@ -35,10 +35,10 @@ impl error::Error for Error {
             #[cfg(feature = "http")]
             Error::HttpError(ref err) => Some(err),
             Error::IO(ref err) => Some(err),
-            Error::LinuxError(ref err) => Some(err),
+            Error::Linux(ref err) => Some(err),
             Error::NotImplemented(_) => None,
-            Error::NulError(ref err) => Some(err),
-            Error::FromVecWithNulError(ref err) => Some(err),
+            Error::Nul(ref err) => Some(err),
+            Error::FromVecWithNul(ref err) => Some(err),
         }
     }
 }
@@ -58,18 +58,18 @@ impl From<io::Error> for Error {
 
 impl From<nix::errno::Errno> for Error {
     fn from(err: nix::errno::Errno) -> Self {
-        Error::LinuxError(err)
+        Error::Linux(err)
     }
 }
 
 impl From<NulError> for Error {
     fn from(err: NulError) -> Self {
-        Error::NulError(err)
+        Error::Nul(err)
     }
 }
 
 impl From<FromVecWithNulError> for Error {
     fn from(err: FromVecWithNulError) -> Self {
-        Error::FromVecWithNulError(err)
+        Error::FromVecWithNul(err)
     }
 }
