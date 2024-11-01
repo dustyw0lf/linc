@@ -21,7 +21,7 @@ ureq = { version = "2.10.1", optional = true }
 
 [dev-dependencies]
 tempfile = "3.13.0"
-# Make HTTP exmples work with `cargo run --example <example>`
+# Make exmples requiring features work with `cargo run --example <example>`
 linc = { path = ".", features = ["http"] }
 
 [lints.clippy]
