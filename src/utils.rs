@@ -17,12 +17,12 @@ pub fn get_env() -> Result<Vec<CString>> {
 fn os_string_to_c_string(string: OsString) -> Result<CString> {
     let mut vector = string.into_vec();
     vector.push(0);
-    CString::from_vec_with_nul(vector).map_err(|e| Error::FromVecWithNulError(e))
+    CString::from_vec_with_nul(vector).map_err(Error::FromVecWithNulError)
 }
 
 pub fn str_to_vec_c_string(string: &str) -> Result<Vec<CString>> {
     string
         .split_whitespace()
-        .map(|x| CString::new(x).map_err(|e| Error::NulError(e)))
+        .map(|x| CString::new(x).map_err(Error::NulError))
         .collect()
 }
