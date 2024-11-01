@@ -86,7 +86,7 @@ pub fn hollow(payload: Payload) -> Result<()> {
             execve(&target_c_string, target_args_slice, env_slice)?;
         }
 
-        Err(error) => return Err(Error::LinuxError(error)),
+        Err(error) => return Err(Error::Linux(error)),
     }
 
     Ok(())
@@ -140,7 +140,7 @@ pub fn memfd(payload: Payload) -> Result<()> {
         Ok(ForkResult::Child) => {
             fexecve(fd.as_raw_fd(), args_slice, env_slice)?;
         }
-        Err(error) => return Err(Error::LinuxError(error)),
+        Err(error) => return Err(Error::Linux(error)),
     }
 
     Ok(())
