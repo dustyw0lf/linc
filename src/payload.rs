@@ -37,6 +37,12 @@ impl Payload {
         })
     }
 
+    /// Creates a new payload by reading a file.
+    ///
+    /// # Errors
+    /// Returns an error if:
+    /// - The file cannot be read
+    /// - The file path contains invalid UTF-8 characters
     pub fn from_file(path: impl Into<String>, payload_type: PayloadType) -> Result<Self> {
         let path = path.into();
 
@@ -51,6 +57,10 @@ impl Payload {
     }
 
     #[cfg(feature = "http")]
+    /// Creates a new payload from a byte vector.
+    ///
+    /// # Errors
+    /// Currently infallible, but returns `Result` for consistency with other constructors.
     pub fn from_url(url: impl Into<String>, payload_type: PayloadType) -> Result<Self> {
         let url = url.into();
 
@@ -95,8 +105,22 @@ impl Payload {
 /// `Result<Payload>` directly, making it easier to chain operations without explicit
 /// error handling.
 pub trait PayloadResultExt {
+    /// Sets the arguments for the payload.
+    ///
+    /// # Errors
+    /// Returns the original error if the payload creation failed.
     fn set_args(self, args: &str) -> Result<Payload>;
+
+    /// Sets the target executable for the payload.
+    ///
+    /// # Errors
+    /// Returns the original error if the payload creation failed.
     fn set_target(self, target: &str) -> Result<Payload>;
+
+    /// Sets the target executable's arguments for the payload.
+    ///
+    /// # Errors
+    /// Returns the original error if the payload creation failed.
     fn set_target_args(self, target_args: &str) -> Result<Payload>;
 }
 

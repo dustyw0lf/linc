@@ -16,6 +16,13 @@ use exeutils::elf64;
 /// Uses [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to inject shellcode into a sacrificial process.
 /// Only works with shellcode payloads.
 ///
+/// # Errors
+///
+/// Returns an error if:
+/// - The payload type is `Executable` (only shellcode is supported)
+/// - Process creation or manipulation fails
+/// - Memory operations fail
+///
 /// # Examples
 ///
 /// ```no_run
@@ -39,13 +46,6 @@ use exeutils::elf64;
 ///     eprintln!("An error occurred: {:?}", e);
 /// }
 /// ```
-///
-/// # Errors
-///
-/// Returns an error if:
-/// - The payload type is `Executable` (only shellcode is supported)
-/// - Process creation or manipulation fails
-/// - Memory operations fail
 pub fn hollow(payload: Payload) -> Result<()> {
     match unsafe { fork() } {
         Ok(ForkResult::Parent { child, .. }) => {
@@ -95,6 +95,13 @@ pub fn hollow(payload: Payload) -> Result<()> {
 /// Uses [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file in memory,
 /// writes the payload to it, and executes it. Shellcode is converted to an ELF
 /// before being executed.
+///
+/// # Errors
+/// Returns an error if:
+/// - Memory file creation fails
+/// - Writing to the memory file fails
+/// - Process creation fails
+/// - Execution of the payload fails
 ///
 /// # Examples
 ///
