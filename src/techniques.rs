@@ -75,7 +75,7 @@ pub fn hollow(payload: Payload) -> Result<()> {
         Ok(ForkResult::Child) => {
             ptrace::traceme()?;
 
-            let target_c_string = CString::new(payload.target).unwrap();
+            let target_c_string = CString::new(payload.target)?;
 
             let target_args = str_to_vec_c_string(&payload.target_args)?;
             let target_args_slice = target_args.as_slice();
