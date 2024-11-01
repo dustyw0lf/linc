@@ -23,7 +23,7 @@ impl fmt::Display for Error {
             Error::IO(ref err) => write!(f, "{err:?}"),
             Error::Linux(err) => write!(f, "{:?}: {}", err, err.desc()),
             Error::NotImplemented(ref string) => write!(f, "not implemented: {string}"),
-            Error::Nul(ref err) => write!(f, "{}", err),
+            Error::Nul(ref err) => write!(f, "{err}"),
             Error::FromVecWithNul(ref err) => write!(f, "{err}"),
         }
     }
