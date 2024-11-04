@@ -9,7 +9,7 @@ use nix::sys::wait::waitpid;
 use nix::unistd::{self, execve, fexecve, fork, ForkResult};
 
 use crate::error::{Error, Result};
-use crate::payload::{Payload, PayloadType};
+use crate::payload::{New, Payload, PayloadType};
 use crate::utils::{get_env, str_to_vec_c_string};
 use exeutils::elf64;
 
@@ -123,7 +123,7 @@ pub fn hollow(payload: Payload) -> Result<()> {
 ///     eprintln!("An error occurred: {:?}", e);
 /// }
 /// ```
-pub fn memfd(payload: Payload) -> Result<()> {
+pub fn memfd(payload: Payload<New>) -> Result<()> {
     let anon_file_name = CString::new("")?;
     let p_file_name = anon_file_name.as_c_str();
 
@@ -136,7 +136,7 @@ pub fn memfd(payload: Payload) -> Result<()> {
 
     unistd::write(&fd, &bytes)?;
 
-    let args = str_to_vec_c_string(&payload.args)?;
+    let args = str_to_vec_c_string(&payload.args())?;
     let args_slice = args.as_slice();
 
     let env = get_env()?;

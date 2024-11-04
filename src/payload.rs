@@ -12,14 +12,14 @@ pub trait ProcessState {}
 
 // Possible process states
 pub struct New {
-    pub name: String,
-    pub args: String,
-    pub target: String,
-    pub target_args: String,
+    name: String,
+    args: String,
+    target: String,
+    target_args: String,
 }
 
 pub struct Existing {
-    pub pid: Pid,
+    pid: Pid,
 }
 
 // Make sure that ProcessState can be either New or Existing
@@ -28,9 +28,9 @@ impl ProcessState for Existing {}
 
 // Base struct with common fields
 pub struct Payload<S: ProcessState> {
-    pub payload_type: PayloadType,
-    pub bytes: Vec<u8>,
-    pub state: S,
+    payload_type: PayloadType,
+    bytes: Vec<u8>,
+    state: S,
 }
 
 /// Specifies the type of payload being used.
