@@ -1,14 +1,14 @@
 use std::fs;
 use std::io::Write;
 
-use linc::payload::{Payload, PayloadType};
+use linc::payload::{New, Payload, PayloadType};
 use tempfile::NamedTempFile;
 
 #[test]
 fn test_payload_from_bytes() {
     let test_bytes = vec![0x90, 0x90, 0x90]; // NOP sled
-    let payload = Payload::from_bytes(test_bytes.clone(), PayloadType::Shellcode).unwrap();
-    assert_eq!(payload.bytes, test_bytes);
+    let payload = Payload::<New>::from_bytes(test_bytes.clone(), PayloadType::Shellcode).unwrap();
+    assert_eq!(payload.bytes(), test_bytes);
 }
 
 #[test]
@@ -34,10 +34,10 @@ fn test_payload_from_file() {
     let bin_bytes = fs::read(bin_path).unwrap();
     let bin_name = bin_path.split('/').last().unwrap();
 
-    let payload = Payload::from_file(bin_path, PayloadType::Executable).unwrap();
+    let payload = Payload::<New>::from_file(bin_path, PayloadType::Executable).unwrap();
 
-    assert_eq!(payload.name, bin_name);
-    assert_eq!(payload.bytes, bin_bytes);
+    assert_eq!(payload.name(), bin_name);
+    assert_eq!(payload.bytes(), bin_bytes);
 }
 
 #[cfg(feature = "http")]
@@ -70,7 +70,7 @@ mod http_tests {
         let port = start_test_server();
         let url = format!("http://127.0.0.1:{}/test.bin", port);
 
-        let result = Payload::from_url(url, PayloadType::Executable);
+        let result = Payload::<New>::from_url(url, PayloadType::Executable);
         assert!(result.is_ok());
     }
 }
