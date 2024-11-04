@@ -269,31 +269,31 @@ pub trait PayloadResultExt {
     ///
     /// # Errors
     /// Returns the original error if the payload creation failed.
-    fn set_args(self, args: &str) -> Result<Payload>;
+    fn set_args(self, args: &str) -> Result<Payload<New>>;
 
     /// Sets the target executable for the payload.
     ///
     /// # Errors
     /// Returns the original error if the payload creation failed.
-    fn set_target(self, target: &str) -> Result<Payload>;
+    fn set_target(self, target: &str) -> Result<Payload<New>>;
 
     /// Sets the target executable's arguments for the payload.
     ///
     /// # Errors
     /// Returns the original error if the payload creation failed.
-    fn set_target_args(self, target_args: &str) -> Result<Payload>;
+    fn set_target_args(self, target_args: &str) -> Result<Payload<New>>;
 }
 
-impl PayloadResultExt for Result<Payload> {
-    fn set_args(self, args: &str) -> Result<Payload> {
+impl PayloadResultExt for Result<Payload<New>> {
+    fn set_args(self, args: &str) -> Result<Payload<New>> {
         self.map(|payload| payload.set_args(args))
     }
 
-    fn set_target(self, target: &str) -> Result<Payload> {
+    fn set_target(self, target: &str) -> Result<Payload<New>> {
         self.map(|payload| payload.set_target(target))
     }
 
-    fn set_target_args(self, target_args: &str) -> Result<Payload> {
+    fn set_target_args(self, target_args: &str) -> Result<Payload<New>> {
         self.map(|payload| payload.set_target_args(target_args))
     }
 }
