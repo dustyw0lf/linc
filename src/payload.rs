@@ -10,7 +10,7 @@ use crate::error::Result;
 // Marker trait
 pub trait ProcessState {}
 
-// Zero-sized types representing possible process states
+// Possible process states
 pub struct New {
     pub name: String,
     pub args: String,
@@ -201,6 +201,42 @@ impl Payload<Existing> {
                 pid: Pid::from_raw(pid),
             },
         })
+    }
+}
+
+// Common getters for all states
+impl<S: ProcessState> Payload<S> {
+    pub fn payload_type(&self) -> &PayloadType {
+        &self.payload_type
+    }
+
+    pub fn bytes(&self) -> &[u8] {
+        &self.bytes
+    }
+}
+
+// Variant-specific getters
+impl Payload<New> {
+    pub fn name(&self) -> &str {
+        &self.state.name
+    }
+
+    pub fn args(&self) -> &str {
+        &self.state.args
+    }
+
+    pub fn target(&self) -> &str {
+        &self.state.target
+    }
+
+    pub fn target_args(&self) -> &str {
+        &self.state.target_args
+    }
+}
+
+impl Payload<Existing> {
+    pub fn pid(&self) -> Pid {
+        self.state.pid
     }
 }
 
