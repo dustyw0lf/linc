@@ -16,6 +16,10 @@ use exeutils::elf64;
 /// Uses [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to inject shellcode into a sacrificial process.
 /// Only works with shellcode payloads.
 ///
+/// # Arguments
+///
+/// * `payload` - A `Payload<New>` containing shellcode and target process configuration
+///
 /// # Errors
 ///
 /// Returns an error if:
@@ -26,23 +30,17 @@ use exeutils::elf64;
 /// # Examples
 ///
 /// ```no_run
-/// use linc::payload::{Payload, PayloadResultExt, PayloadType};
+/// use linc::payload::{New, Payload, PayloadType};
 /// use linc::techniques::hollow;
 ///
-/// let shellcode = vec![/* bytes */];
+/// let shellcode = vec![/* shellcode bytes */];
 ///
-/// let payload = Payload::from_bytes(shellcode, PayloadType::Shellcode)
+/// let payload = Payload::<New>::from_bytes(shellcode, PayloadType::Shellcode)
+///     .unwrap()
 ///     .set_target("/usr/bin/yes")
 ///     .set_target_args("YES");
 ///
-/// // Check if the payload was created successfully
-/// if let Err(e) = payload {
-///     eprintln!("Failed to create payload: {:?}", e);
-///     return;
-/// }
-///
-/// // Execute the payload using hollow
-/// if let Err(e) = hollow(payload.unwrap()) {
+/// if let Err(e) = hollow(payload) {
 ///     eprintln!("An error occurred: {:?}", e);
 /// }
 /// ```
@@ -96,6 +94,10 @@ pub fn hollow(payload: Payload<New>) -> Result<()> {
 /// writes the payload to it, and executes it. Shellcode is converted to an ELF
 /// before being executed.
 ///
+/// # Arguments
+///
+/// * `payload` - A `Payload<New>` containing either an executable or shellcode
+///
 /// # Errors
 /// Returns an error if:
 /// - Memory file creation fails
@@ -106,20 +108,23 @@ pub fn hollow(payload: Payload<New>) -> Result<()> {
 /// # Examples
 ///
 /// ```no_run
-/// use linc::payload::{Payload, PayloadResultExt, PayloadType};
+/// use linc::payload::{New, Payload, PayloadType};
 /// use linc::techniques::memfd;
 ///
-/// let payload = Payload::from_file("/usr/bin/ls", PayloadType::Executable)
+/// // Execute an existing binary
+/// let payload = Payload::<New>::from_file("/usr/bin/ls", PayloadType::Executable)
+///     .unwrap()
 ///     .set_args("-l -a -h");
 ///
-/// // Check if the payload was created successfully
-/// if let Err(e) = payload {
-///     eprintln!("Failed to create payload: {:?}", e);
-///     return;
+/// if let Err(e) = memfd(payload) {
+///     eprintln!("An error occurred: {:?}", e);
 /// }
 ///
-/// // Execute the payload using memfd
-/// if let Err(e) = memfd(payload.unwrap()) {
+/// // Execute shellcode
+/// let shellcode = vec![/* shellcode bytes */];
+/// let payload = Payload::<New>::from_bytes(shellcode, PayloadType::Shellcode).unwrap();
+///
+/// if let Err(e) = memfd(payload) {
 ///     eprintln!("An error occurred: {:?}", e);
 /// }
 /// ```
