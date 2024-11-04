@@ -5,10 +5,23 @@ use crate::error::Result;
 
 // region:    --- Payload
 
+// Marker trait - defines what types can be valid process states
+pub trait ProcessState {}
+
+// Zero-sized types representing possible process states
+pub struct New;
+pub struct Existing;
+
+// Implement the marker trait for our valid states.
+// This means Payload<T> where T: ProcessState can only be
+// Payload<New> or Payload<Existing>
+impl ProcessState for New {}
+impl ProcessState for Existing {}
+
 /// Represents an executable payload that can be either a complete ELF executable
 /// or raw shellcode.
 #[derive(Debug)]
-pub struct Payload {
+pub struct Payload<S> {
     pub name: String,
     pub args: String,
     pub payload_type: PayloadType,
