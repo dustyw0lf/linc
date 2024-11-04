@@ -34,7 +34,7 @@ pub struct Payload<S: ProcessState> {
 }
 
 /// Specifies the type of payload being used.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum PayloadType {
     Executable,
     Shellcode,
