@@ -206,8 +206,8 @@ impl Payload<Existing> {
 
 // Common getters for all states
 impl<S: ProcessState> Payload<S> {
-    pub fn payload_type(&self) -> &PayloadType {
-        &self.payload_type
+    pub fn payload_type(&self) -> PayloadType {
+        self.payload_type
     }
 
     pub fn bytes(&self) -> &[u8] {
