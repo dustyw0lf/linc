@@ -1,33 +1,36 @@
 //! Defines types and implementations for working with executable payloads.
 use std::fs;
 
+use nix::unistd::Pid;
+
 use crate::error::Result;
 
 // region:    --- Payload
 
-// Marker trait - defines what types can be valid process states
+// Marker trait
 pub trait ProcessState {}
 
 // Zero-sized types representing possible process states
-pub struct New;
-pub struct Existing;
+pub struct New {
+    pub name: String,
+    pub args: String,
+    pub target: String,
+    pub target_args: String,
+}
 
-// Implement the marker trait for our valid states.
-// This means Payload<T> where T: ProcessState can only be
-// Payload<New> or Payload<Existing>
+pub struct Existing {
+    pub pid: Pid,
+}
+
+// Make sure that ProcessState can be either New or Existing
 impl ProcessState for New {}
 impl ProcessState for Existing {}
 
-/// Represents an executable payload that can be either a complete ELF executable
-/// or raw shellcode.
-#[derive(Debug)]
-pub struct Payload<S> {
-    pub name: String,
-    pub args: String,
+// Base struct with common fields
+pub struct Payload<S: ProcessState> {
     pub payload_type: PayloadType,
     pub bytes: Vec<u8>,
-    pub target: String,
-    pub target_args: String,
+    pub state: S,
 }
 
 /// Specifies the type of payload being used.
@@ -38,7 +41,7 @@ pub enum PayloadType {
 }
 
 // Constructors
-impl Payload {
+impl Payload<New> {
     /// Creates a new payload from a byte vector.
     ///
     /// The bytes can represent either a complete ELF executable or raw shellcode, as specified by
@@ -62,12 +65,14 @@ impl Payload {
     /// ```
     pub fn from_bytes(bytes: Vec<u8>, payload_type: PayloadType) -> Result<Self> {
         Ok(Self {
-            name: String::new(),
-            args: String::new(),
             payload_type,
             bytes,
-            target: String::new(),
-            target_args: String::new(),
+            state: New {
+                name: String::new(),
+                args: String::new(),
+                target: String::new(),
+                target_args: String::new(),
+            },
         })
     }
 
@@ -96,12 +101,14 @@ impl Payload {
         let path = path.into();
 
         Ok(Self {
-            name: path.split('/').last().unwrap_or("").to_string(),
-            args: String::new(),
             payload_type,
-            bytes: fs::read(path)?,
-            target: String::new(),
-            target_args: String::new(),
+            bytes: fs::read(&path)?,
+            state: New {
+                name: path.split('/').last().unwrap_or("").to_string(),
+                args: String::new(),
+                target: String::new(),
+                target_args: String::new(),
+            },
         })
     }
 
@@ -143,30 +150,74 @@ impl Payload {
         response.into_reader().read_to_end(&mut payload_bytes)?;
 
         Ok(Self {
-            name: url.split('/').last().unwrap_or("").to_string(),
-            args: String::new(),
             payload_type,
             bytes: payload_bytes,
-            target: String::new(),
-            target_args: String::new(),
+            state: New {
+                name: url.split('/').last().unwrap_or("").to_string(),
+                args: String::new(),
+                target: String::new(),
+                target_args: String::new(),
+            },
+        })
+    }
+}
+
+impl Payload<Existing> {
+    pub fn from_bytes(bytes: Vec<u8>, payload_type: PayloadType, pid: i32) -> Result<Self> {
+        Ok(Self {
+            payload_type,
+            bytes,
+            state: Existing {
+                pid: Pid::from_raw(pid),
+            },
+        })
+    }
+
+    pub fn from_file(path: impl Into<String>, payload_type: PayloadType, pid: i32) -> Result<Self> {
+        let path = path.into();
+
+        Ok(Self {
+            payload_type,
+            bytes: fs::read(&path)?,
+            state: Existing {
+                pid: Pid::from_raw(pid),
+            },
+        })
+    }
+
+    #[cfg(feature = "http")]
+    pub fn from_url(url: impl Into<String>, payload_type: PayloadType, pid: i32) -> Result<Self> {
+        let url = url.into();
+
+        let response = ureq::get(&url).call()?;
+
+        let mut payload_bytes: Vec<u8> = Vec::new();
+        response.into_reader().read_to_end(&mut payload_bytes)?;
+
+        Ok(Self {
+            payload_type,
+            bytes: payload_bytes,
+            state: Existing {
+                pid: Pid::from_raw(pid),
+            },
         })
     }
 }
 
 // Chainable setters
-impl Payload {
+impl Payload<New> {
     pub fn set_args(mut self, args: &str) -> Self {
-        self.args = self.name.clone() + " " + args;
+        self.state.args = self.state.name.clone() + " " + args;
         self
     }
 
     pub fn set_target(mut self, target: &str) -> Self {
-        self.target = target.to_string();
+        self.state.target = target.to_string();
         self
     }
 
     pub fn set_target_args(mut self, target_args: &str) -> Self {
-        self.target_args = self.target.clone() + " " + target_args;
+        self.state.target_args = self.state.target.clone() + " " + target_args;
         self
     }
 }
