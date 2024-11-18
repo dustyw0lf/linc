@@ -1,7 +1,7 @@
 use std::ffi::c_void;
 
 use nix::sys::ptrace;
-use nix::sys::wait::{wait, waitpid};
+use nix::sys::wait::waitpid;
 use nix::unistd::Pid;
 
 use crate::error::Result;
@@ -11,7 +11,7 @@ pub(crate) fn ptace_write_rip(pid: Pid, bytes: &[u8], is_forked: bool) -> Result
         waitpid(pid, None)?;
     } else {
         ptrace::attach(pid)?;
-        wait()?;
+        waitpid(pid, None)?;
     }
 
     let regs = ptrace::getregs(pid)?;
