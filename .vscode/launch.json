@@ -26,15 +26,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug example 'hollow_shellcode'",
+            "name": "Debug example 'spawn_hollow_shellcode'",
             "cargo": {
                 "args": [
                     "build",
-                    "--example=hollow_shellcode",
+                    "--example=spawn_hollow_shellcode",
                     "--package=linc"
                 ],
                 "filter": {
-                    "name": "hollow_shellcode",
+                    "name": "spawn_hollow_shellcode",
                     "kind": "example"
                 }
             },
@@ -44,16 +44,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in example 'hollow_shellcode'",
+            "name": "Debug unit tests in example 'spawn_hollow_shellcode'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--example=hollow_shellcode",
+                    "--example=spawn_hollow_shellcode",
                     "--package=linc"
                 ],
                 "filter": {
-                    "name": "hollow_shellcode",
+                    "name": "spawn_hollow_shellcode",
                     "kind": "example"
                 }
             },
@@ -63,15 +63,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug example 'memfd_executable'",
+            "name": "Debug example 'spawn_memfd_executable'",
             "cargo": {
                 "args": [
                     "build",
-                    "--example=memfd_executable",
+                    "--example=spawn_memfd_executable",
                     "--package=linc"
                 ],
                 "filter": {
-                    "name": "memfd_executable",
+                    "name": "spawn_memfd_executable",
                     "kind": "example"
                 }
             },
@@ -81,16 +81,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in example 'memfd_executable'",
+            "name": "Debug unit tests in example 'spawn_memfd_executable'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--example=memfd_executable",
+                    "--example=spawn_memfd_executable",
                     "--package=linc"
                 ],
                 "filter": {
-                    "name": "memfd_executable",
+                    "name": "spawn_memfd_executable",
                     "kind": "example"
                 }
             },
@@ -100,15 +100,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug example 'memfd_shellcode'",
+            "name": "Debug example 'spawn_memfd_shellcode'",
             "cargo": {
                 "args": [
                     "build",
-                    "--example=memfd_shellcode",
+                    "--example=spawn_memfd_shellcode",
                     "--package=linc"
                 ],
                 "filter": {
-                    "name": "memfd_shellcode",
+                    "name": "spawn_memfd_shellcode",
                     "kind": "example"
                 }
             },
@@ -118,17 +118,36 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in example 'memfd_shellcode'",
+            "name": "Debug unit tests in example 'spawn_memfd_shellcode'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--example=memfd_shellcode",
+                    "--example=spawn_memfd_shellcode",
                     "--package=linc"
                 ],
                 "filter": {
-                    "name": "memfd_shellcode",
+                    "name": "spawn_memfd_shellcode",
                     "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'payload_tests'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=payload_tests",
+                    "--package=linc"
+                ],
+                "filter": {
+                    "name": "payload_tests",
+                    "kind": "test"
                 }
             },
             "args": [],
