@@ -1,5 +1,5 @@
 use linc::payload::{New, Payload, PayloadResultExt, PayloadType};
-use linc::techniques::memfd;
+use linc::techniques::spawn::memfd;
 
 fn main() {
     let payload =
