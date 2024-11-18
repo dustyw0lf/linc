@@ -13,13 +13,15 @@ fn main() {
 
     let payload = Payload::<New>::from_file(&shellcode, PayloadType::Shellcode);
 
-    // Check if the payload was created successfully
-    if let Err(e) = payload {
-        eprintln!("Failed to create payload: {:?}", e);
-        return;
-    }
+    let payload = match payload {
+        Ok(p) => p,
+        Err(e) => {
+            eprintln!("Failed to create payload: {:?}", e);
+            return;
+        }
+    };
 
-    if let Err(e) = memfd(payload.unwrap()) {
+    if let Err(e) = memfd(payload) {
         eprintln!("An error occurred: {:?}", e);
     }
 }

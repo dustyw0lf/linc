@@ -6,13 +6,15 @@ fn main() {
         Payload::<New>::from_file("/usr/bin/ls", PayloadType::Executable).set_args("-l -a -h");
     // let payload = Payload::from_url("http://127.0.0.1:8081/ls", PayloadType::Executable).set_args("-l -a -h");
 
-    // Check if the payload was created successfully
-    if let Err(e) = payload {
-        eprintln!("Failed to create payload: {:?}", e);
-        return;
-    }
+    let payload = match payload {
+        Ok(p) => p,
+        Err(e) => {
+            eprintln!("Failed to create payload: {:?}", e);
+            return;
+        }
+    };
 
-    if let Err(e) = memfd(payload.unwrap()) {
+    if let Err(e) = memfd(payload) {
         eprintln!("An error occurred: {:?}", e);
     }
 }
