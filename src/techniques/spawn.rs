@@ -1,4 +1,4 @@
-//! Techniques that spawn new processes.
+//! Techniques that spawn a new process.
 
 use std::ffi::{c_void, CString};
 use std::os::fd::AsRawFd;

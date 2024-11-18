@@ -1,1 +1,1 @@
-//! Techniques that inject into existing processes.
+//! Techniques that inject into an existing process.
