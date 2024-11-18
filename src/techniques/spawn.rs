@@ -10,7 +10,7 @@ use nix::unistd::{self, execve, fexecve, fork, ForkResult};
 use exeutils::elf64;
 
 use crate::error::{Error, Result};
-use crate::payload::{New, Payload, PayloadType};
+use crate::payload::{Payload, PayloadType, Spawn};
 use crate::primitives::ptrace::ptace_write_rip;
 use crate::utils::{get_env, str_to_vec_c_string};
 
@@ -45,7 +45,7 @@ use crate::utils::{get_env, str_to_vec_c_string};
 ///     eprintln!("An error occurred: {:?}", e);
 /// }
 /// ```
-pub fn hollow(payload: Payload<New>) -> Result<()> {
+pub fn hollow(payload: Payload<Spawn>) -> Result<()> {
     match unsafe { fork() } {
         Ok(ForkResult::Parent { child, .. }) => match payload.payload_type() {
             PayloadType::Executable => {
@@ -116,7 +116,7 @@ pub fn hollow(payload: Payload<New>) -> Result<()> {
 ///     eprintln!("An error occurred: {:?}", e);
 /// }
 /// ```
-pub fn memfd(payload: Payload<New>) -> Result<()> {
+pub fn memfd(payload: Payload<Spawn>) -> Result<()> {
     let anon_file_name = CString::new("")?;
     let p_file_name = anon_file_name.as_c_str();
 
