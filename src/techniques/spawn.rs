@@ -3,11 +3,10 @@
 use std::ffi::CString;
 use std::os::fd::AsRawFd;
 
+use exeutils::elf64;
 use nix::sys::memfd::{memfd_create, MemFdCreateFlag};
 use nix::sys::ptrace;
 use nix::unistd::{self, execve, fexecve, fork, ForkResult};
-
-use exeutils::elf64;
 
 use crate::error::{Error, Result};
 use crate::payload::{Payload, PayloadType, Spawn};
