@@ -7,12 +7,11 @@ use nix::unistd::Pid;
 use crate::error::Result;
 
 pub(crate) fn ptace_write_rip(pid: Pid, bytes: &[u8], is_forked: bool) -> Result<()> {
-    if is_forked {
-        waitpid(pid, None)?;
-    } else {
+    if !is_forked {
         ptrace::attach(pid)?;
-        waitpid(pid, None)?;
     }
+
+    waitpid(pid, None)?;
 
     let regs = ptrace::getregs(pid)?;
 
