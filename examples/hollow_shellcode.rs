@@ -15,13 +15,15 @@ fn main() {
         .set_target("/usr/bin/yes")
         .set_target_args("YES");
 
-    // Check if the payload was created successfully
-    if let Err(e) = payload {
-        eprintln!("Failed to create payload: {:?}", e);
-        return;
-    }
+    let payload = match payload {
+        Ok(p) => p,
+        Err(e) => {
+            eprintln!("Failed to create payload: {:?}", e);
+            return;
+        }
+    };
 
-    if let Err(e) = hollow(payload.unwrap()) {
+    if let Err(e) = hollow(payload) {
         eprintln!("An error occurred: {:?}", e);
     }
 }
