@@ -45,7 +45,7 @@ use crate::utils::{get_env, str_to_vec_c_string};
 ///     eprintln!("An error occurred: {:?}", e);
 /// }
 /// ```
-pub fn hollow(payload: Payload<New>) -> Result<()> {
+pub fn hollow_spawn(payload: Payload<New>) -> Result<()> {
     match unsafe { fork() } {
         Ok(ForkResult::Parent { child, .. }) => match payload.payload_type() {
             PayloadType::Executable => {
