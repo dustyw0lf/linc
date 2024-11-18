@@ -9,6 +9,7 @@
 
 mod error;
 pub mod payload;
+mod primitives;
 pub mod techniques;
 mod utils;
 

