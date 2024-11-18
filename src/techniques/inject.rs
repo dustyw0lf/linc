@@ -1,10 +1,10 @@
 //! Techniques that inject into an existing process.
 
 use crate::error::{Error, Result};
-use crate::payload::{Existing, Payload, PayloadType};
+use crate::payload::{Inject, Payload, PayloadType};
 use crate::primitives::ptrace::ptace_write_rip;
 
-pub fn hollow(payload: Payload<Existing>) -> Result<()> {
+pub fn hollow(payload: Payload<Inject>) -> Result<()> {
     match payload.payload_type() {
         PayloadType::Executable => {
             return Err(Error::NotImplemented(
