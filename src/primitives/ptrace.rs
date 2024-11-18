@@ -4,7 +4,7 @@ use nix::sys::ptrace;
 use nix::sys::wait::{wait, waitpid};
 use nix::unistd::Pid;
 
-use crate::error::{Error, Result};
+use crate::error::Result;
 
 pub(crate) fn ptace_write_rip(pid: Pid, bytes: &[u8], is_forked: bool) -> Result<()> {
     if is_forked {
