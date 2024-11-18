@@ -4,7 +4,7 @@ use crate::error::{Error, Result};
 use crate::payload::{Existing, Payload, PayloadType};
 use crate::primitives::ptrace::ptace_write_rip;
 
-pub fn hollow_inject(payload: Payload<Existing>) -> Result<()> {
+pub fn hollow(payload: Payload<Existing>) -> Result<()> {
     match payload.payload_type() {
         PayloadType::Executable => {
             return Err(Error::NotImplemented(
