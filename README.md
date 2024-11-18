@@ -41,7 +41,7 @@ Change directory into `linc`
 cd linc
 ```
 
-Examples are named like so
+Examples are named like so:
 ```unknown
 [technique type]_[name]_[payload type]
 ```
@@ -60,7 +60,7 @@ Start a listener
 nc -lvnp 1234
 ```
 
-Find a process' ID or create a process for testing
+Find a process ID or create a process for testing
 ```bash
 sleep 10 &
 ```
