@@ -1,6 +1,6 @@
 //! Rust implementations for process injection and fileless ELF execution techniques on Linux.
 //!
-//! The crate provides two main categories of techniques:
+//! The crate provides two categories of techniques:
 //!
 //! - Injection: Techniques that manipulate an existing process to execute injected payload.
 //! - Spawning: Techniques that create a new process to execute a payload.
