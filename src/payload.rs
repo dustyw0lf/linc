@@ -40,8 +40,8 @@ use crate::error::Result;
 /// Currently implemented by `Spawn` and `Inject`.
 pub trait ProcessState {}
 
-/// State type representing payloads that create Spawn processes.
-/// Contains configuration for the Spawn process.
+/// State type representing payloads that spawn new processes.
+/// Contains configuration for the spawned process.
 pub struct Spawn {
     name: String,
     args: String,
@@ -49,7 +49,7 @@ pub struct Spawn {
     target_args: String,
 }
 
-/// State type representing payloads that inject into Inject processes.
+/// State type representing payloads that inject into existing processes.
 /// Contains the target process identifier.
 pub struct Inject {
     pid: Pid,
@@ -60,34 +60,11 @@ impl ProcessState for Spawn {}
 impl ProcessState for Inject {}
 
 /// A payload that can be used for process injection or creation.
-/// The type parameter `S` determines whether this payload creates a Spawn process
+/// The type parameter `S` determines whether this payload creates a new process
 /// or injects into an existing one.
 ///
 /// # Type Parameters
-///
 /// * `S` - The process state, must implement `ProcessState`. Can be either `Spawn` or `Inject`.
-///
-/// # Examples
-///
-/// Creating a Spawn process payload:
-/// ```no_run
-/// use linc::payload::{Spawn, Payload, PayloadType};
-///
-/// let payload = Payload::<Spawn>::from_file("/usr/bin/ls", PayloadType::Executable)
-///     .unwrap()
-///     .set_args("-l -a");
-/// ```
-///
-/// Creating an Inject process payload:
-/// ```no_run
-/// use linc::payload::{Inject, Payload, PayloadType};
-///
-/// let payload = Payload::<Inject>::from_file(
-///     "shellcode.bin",
-///     PayloadType::Shellcode,
-///     1234
-/// ).unwrap();
-/// ```
 pub struct Payload<S: ProcessState> {
     payload_type: PayloadType,
     bytes: Vec<u8>,
