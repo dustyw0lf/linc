@@ -13,36 +13,34 @@ use crate::payload::{Payload, PayloadType, Spawn};
 use crate::primitives::ptrace::ptace_write_rip;
 use crate::utils::{get_env, str_to_vec_c_string};
 
-/// Uses [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to inject shellcode into a sacrificial process.
+/// Uses ptrace to inject shellcode into a sacrificial process by overwriting its RIP register.
 /// Only works with shellcode payloads.
 ///
 /// # Arguments
 ///
-/// * `payload` - A `Payload<New>` containing shellcode and target process configuration
+/// * `payload` - A `Payload<Spawn>` containing shellcode and target process configuration
 ///
 /// # Errors
 ///
 /// Returns an error if:
 /// - The payload type is `Executable` (only shellcode is supported)
 /// - Process creation or manipulation fails
-/// - Memory operations fail
 ///
 /// # Examples
 ///
 /// ```no_run
-/// use linc::payload::{New, Payload, PayloadType};
-/// use linc::techniques::hollow;
+/// use linc::payload::{Spawn, Payload};
+/// use linc::techniques::spawn;
 ///
 /// let shellcode = vec![/* shellcode bytes */];
 ///
-/// let payload = Payload::<New>::from_bytes(shellcode, PayloadType::Shellcode)
-///     .unwrap()
+/// // Inject shellcode into a sacrificial 'yes' process
+/// let payload = Payload::<Spawn>::from_bytes(shellcode)
 ///     .set_target("/usr/bin/yes")
 ///     .set_target_args("YES");
+///     .unwrap()
 ///
-/// if let Err(e) = hollow(payload) {
-///     eprintln!("An error occurred: {:?}", e);
-/// }
+/// spawn::hollow(payload).unwrap();
 /// ```
 pub fn hollow(payload: Payload<Spawn>) -> Result<()> {
     match unsafe { fork() } {
@@ -77,43 +75,28 @@ pub fn hollow(payload: Payload<Spawn>) -> Result<()> {
     Ok(())
 }
 
-/// Uses [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file in memory,
-/// writes the payload to it, and executes it. Shellcode is converted to an ELF
-/// before being executed.
+/// Uses memfd_create to create an anonymous file in memory, writes the payload to it,
+/// and executes it. Shellcode is converted to an ELF before execution.
 ///
 /// # Arguments
-///
-/// * `payload` - A `Payload<New>` containing either an executable or shellcode
+/// * `payload` - A `Payload<Spawn>` containing either an executable or shellcode
 ///
 /// # Errors
 /// Returns an error if:
 /// - Memory file creation fails
-/// - Writing to the memory file fails
 /// - Process creation fails
-/// - Execution of the payload fails
 ///
 /// # Examples
-///
 /// ```no_run
-/// use linc::payload::{New, Payload, PayloadType};
-/// use linc::techniques::memfd;
+/// use linc::payload::{Spawn, Payload};
+/// use linc::techniques::spawn;
 ///
 /// // Execute an existing binary
-/// let payload = Payload::<New>::from_file("/usr/bin/ls", PayloadType::Executable)
-///     .unwrap()
+/// let payload = Payload::<Spawn>::from_file("/usr/bin/ls")
 ///     .set_args("-l -a -h");
+///     .unwrap()
 ///
-/// if let Err(e) = memfd(payload) {
-///     eprintln!("An error occurred: {:?}", e);
-/// }
-///
-/// // Execute shellcode
-/// let shellcode = vec![/* shellcode bytes */];
-/// let payload = Payload::<New>::from_bytes(shellcode, PayloadType::Shellcode).unwrap();
-///
-/// if let Err(e) = memfd(payload) {
-///     eprintln!("An error occurred: {:?}", e);
-/// }
+/// spawn::memfd(payload).unwrap();
 /// ```
 pub fn memfd(payload: Payload<Spawn>) -> Result<()> {
     let anon_file_name = CString::new("")?;
