@@ -34,8 +34,6 @@ use nix::unistd::Pid;
 
 use crate::error::Result;
 
-// region:    --- Payload
-
 /// Marker trait that defines valid process states.
 /// Currently implemented by `Spawn` and `Inject`.
 pub trait ProcessState {}
@@ -421,5 +419,3 @@ impl PayloadResultExt for Result<Payload<Spawn>> {
         self.map(|payload| payload.set_target_args(target_args))
     }
 }
-
-// endregion: --- Payload
