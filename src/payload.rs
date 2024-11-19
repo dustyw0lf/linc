@@ -15,17 +15,17 @@
 //! ```no_run
 //! use linc::payload::{Spawn, Payload};
 //!
-//! let payload = Payload::<Spawn>::from_file("/usr/bin/ls")
+//! let payload = Payload::<Spawn>::from_file("/path/to/payload")
+//!     .set_args(/* args */);
 //!     .unwrap()
-//!     .set_args("-l -a -h");
 //! ```
 //!
 //! Injecting into an existing process:
 //! ```no_run
 //! use linc::payload::{Inject, Payload};
 //!
-//! // Inject into process with PID 1234
-//! let payload = Payload::<Inject>::from_file("shellcode.bin", 1234).unwrap();
+//! // Inject into a process with PID 1234
+//! let payload = Payload::<Inject>::from_file("/path/to/payload", 1234).unwrap();
 //! ```
 
 use std::fs;
