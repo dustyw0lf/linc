@@ -1,13 +1,13 @@
 use std::fs;
 use std::io::Write;
 
-use linc::payload::{Payload, PayloadType, Spawn};
+use linc::payload::{Payload, Spawn};
 use tempfile::NamedTempFile;
 
 #[test]
 fn test_payload_from_bytes() {
     let test_bytes = vec![0x90, 0x90, 0x90]; // NOP sled
-    let payload = Payload::<Spawn>::from_bytes(test_bytes.clone(), PayloadType::Shellcode).unwrap();
+    let payload = Payload::<Spawn>::from_bytes(test_bytes.clone()).unwrap();
     assert_eq!(payload.bytes(), test_bytes);
 }
 
@@ -34,7 +34,7 @@ fn test_payload_from_file() {
     let bin_bytes = fs::read(bin_path).unwrap();
     let bin_name = bin_path.split('/').last().unwrap();
 
-    let payload = Payload::<Spawn>::from_file(bin_path, PayloadType::Executable).unwrap();
+    let payload = Payload::<Spawn>::from_file(bin_path).unwrap();
 
     assert_eq!(payload.name(), bin_name);
     assert_eq!(payload.bytes(), bin_bytes);
@@ -70,7 +70,7 @@ mod http_tests {
         let port = start_test_server();
         let url = format!("http://127.0.0.1:{}/test.bin", port);
 
-        let result = Payload::<Spawn>::from_url(url, PayloadType::Executable);
+        let result = Payload::<Spawn>::from_url(url);
         assert!(result.is_ok());
     }
 }
