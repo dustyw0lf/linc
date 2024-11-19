@@ -1,4 +1,4 @@
-//! Techniques that inject into an existing process.
+//! Techniques that inject a payload into an existing process.
 
 use crate::error::{Error, Result};
 use crate::payload::{Inject, Payload, PayloadType};

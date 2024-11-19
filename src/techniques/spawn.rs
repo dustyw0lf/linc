@@ -1,4 +1,4 @@
-//! Techniques that spawn a new process.
+//! Techniques that execute a payload by spawning a new process.
 
 use std::ffi::CString;
 use std::os::fd::AsRawFd;
