@@ -83,7 +83,8 @@ pub fn hollow(payload: Payload<Spawn>) -> Result<()> {
 ///
 /// # Errors
 /// Returns an error if:
-/// - Memory file creation fails
+/// - In-memory file creation fails
+/// - Writing to in-memory file fails
 /// - Process creation fails
 ///
 /// # Examples
