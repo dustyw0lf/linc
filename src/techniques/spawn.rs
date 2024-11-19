@@ -29,13 +29,13 @@ use crate::utils::{get_env, str_to_vec_c_string};
 /// # Examples
 ///
 /// ```no_run
-/// use linc::payload::{Spawn, Payload};
+/// use linc::payload::{Payload, Spawn};
 /// use linc::techniques::spawn;
 ///
-/// let shellcode = vec![/* shellcode bytes */];
+/// let bytes = vec![/* shellcode bytes */];
 ///
 /// // Inject shellcode into a sacrificial 'yes' process
-/// let payload = Payload::<Spawn>::from_bytes(shellcode)
+/// let payload = Payload::<Spawn>::from_bytes(bytes)
 ///     .set_target("/usr/bin/yes")
 ///     .set_target_args("YES");
 ///     .unwrap()
@@ -89,12 +89,12 @@ pub fn hollow(payload: Payload<Spawn>) -> Result<()> {
 ///
 /// # Examples
 /// ```no_run
-/// use linc::payload::{Spawn, Payload};
+/// use linc::payload::{Payload, Spawn};
 /// use linc::techniques::spawn;
 ///
 /// // Execute an existing binary
-/// let payload = Payload::<Spawn>::from_file("/usr/bin/ls")
-///     .set_args("-l -a -h");
+/// let payload = Payload::<Spawn>::from_file("/path/to/payload")
+///     .set_args(/* args */);
 ///     .unwrap()
 ///
 /// spawn::memfd(payload).unwrap();
