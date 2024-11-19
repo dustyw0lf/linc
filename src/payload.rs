@@ -1,29 +1,31 @@
-//! Defines types and implementations for working with executable payloads.
+//! Defines types and implementations for creating and configuring executable payloads.
 //!
-//! There are two types of payloads which:
-//! - Create Spawn processes (`Payload<Spawn>`)
-//! - Inject into Inject processes (`Payload<Inject>`)
+//! This module provides:
+//! - `Payload<Spawn>` for creating new processes
+//! - `Payload<Inject>` for injecting into existing processes
+//!
+//! Payloads can be created from:
+//! - Files using `from_file()`
+//! - Raw bytes using `from_bytes()`
+//! - URLs using `from_url()` (requires `http` feature)
 //!
 //! # Examples
 //!
-//! Creating a Spawn process:
+//! Creating a new process:
 //! ```no_run
-//! use linc::payload::{Spawn, Payload, PayloadType};
+//! use linc::payload::{Spawn, Payload};
 //!
-//! let payload = Payload::<Spawn>::from_file("/usr/bin/ls", PayloadType::Executable)
+//! let payload = Payload::<Spawn>::from_file("/usr/bin/ls")
 //!     .unwrap()
-//!     .set_args("-l -a");
+//!     .set_args("-l -a -h");
 //! ```
 //!
-//! Injecting into an Inject process:
+//! Injecting into an existing process:
 //! ```no_run
-//! use linc::payload::{Inject, Payload, PayloadType};
+//! use linc::payload::{Inject, Payload};
 //!
-//! let payload = Payload::<Inject>::from_file(
-//!     "shellcode.bin",
-//!     PayloadType::Shellcode,
-//!     1234  // PID of target process
-//! ).unwrap();
+//! // Inject into process with PID 1234
+//! let payload = Payload::<Inject>::from_file("shellcode.bin", 1234).unwrap();
 //! ```
 
 use std::fs;
