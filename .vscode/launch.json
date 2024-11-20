@@ -63,6 +63,43 @@
         {
             "type": "lldb",
             "request": "launch",
+            "name": "Debug example 'inject_procfs_overwrite_rip_shellcode'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=inject_procfs_overwrite_rip_shellcode",
+                    "--package=linc"
+                ],
+                "filter": {
+                    "name": "inject_procfs_overwrite_rip_shellcode",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'inject_procfs_overwrite_rip_shellcode'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=inject_procfs_overwrite_rip_shellcode",
+                    "--package=linc"
+                ],
+                "filter": {
+                    "name": "inject_procfs_overwrite_rip_shellcode",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
             "name": "Debug example 'spawn_hollow_shellcode'",
             "cargo": {
                 "args": [
