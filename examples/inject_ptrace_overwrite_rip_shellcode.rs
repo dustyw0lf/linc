@@ -1,7 +1,7 @@
 use std::env::{args, current_dir};
 
 use linc::payload::{Inject, Payload};
-use linc::techniques::inject::procfs_overwrite_rip;
+use linc::techniques::inject::ptrace_overwrite_rip;
 
 fn main() {
     let path = current_dir().unwrap();
@@ -27,7 +27,7 @@ fn main() {
         }
     };
 
-    if let Err(e) = procfs_overwrite_rip(payload) {
+    if let Err(e) = ptrace_overwrite_rip(payload) {
         eprintln!("An error occurred: {:?}", e);
     }
 }
