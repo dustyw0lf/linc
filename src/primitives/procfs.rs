@@ -4,7 +4,7 @@ use std::fs;
 
 use crate::error::{Error, Result};
 
-pub(crate) fn find_memory_region(
+pub(crate) fn find_mem_region(
     pid: Pid,
     get_start_address: bool,
     permissions: &str,
