@@ -59,7 +59,7 @@ Run the spawn_memfd_executable example with an ELF file
 cargo run --example spawn_memfd_executable
 ```
 
-### inject_hollow_shellcode
+### inject_procfs_overwrite_rip_shellcode
 Start a listener
 ```bash
 nc -lvnp 1234
@@ -72,7 +72,7 @@ sleep 10 &
 
 Run the example and pass the PID as an argument
 ```bash
-cargo run --example inject_hollow_shellcode -- <pid>
+cargo run --example inject_procfs_overwrite_rip_shellcode -- <pid>
 ```
 
 ## Testing
