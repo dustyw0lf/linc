@@ -43,7 +43,8 @@ pub fn hollow(payload: Payload<Inject>) -> Result<()> {
     Ok(())
 }
 
-/// Uses procfs to inject shellcode into a target process by writing to its memory and redirecting execution.
+/// Uses procfs to inject shellcode into a target process by overwriting
+/// an executable memory section and then point the RIP register to it.
 /// Only works with shellcode payloads.
 ///
 /// # Arguments
