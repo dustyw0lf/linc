@@ -9,11 +9,12 @@
 Currently implemented techniques:
 
 ### Spawn
-- Using [memfd_create(2)](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file in memory, write an ELF to it, and then execute.
-- Using [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to stop a forked process, overwrite its RIP register with shellcode, and then resume it.
+- Using [memfd_create](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file in memory, write an ELF to it, and then execute.
+- Using [ptrace](https://man7.org/linux/man-pages/man2/ptrace.2.html) to stop a forked process, overwrite its RIP register with shellcode, and then resume it.
 
 ### Inject
-- Using [ptrace(2)](https://man7.org/linux/man-pages/man2/ptrace.2.html) to inject shellcode into an existing process by overwriting its RIP register.
+- Using [ptrace](https://man7.org/linux/man-pages/man2/ptrace.2.html) to inject shellcode into an existing process by overwriting its RIP register.
+- Parsing [/proc/pid/maps](https://man7.org/linux/man-pages/man5/proc_pid_maps.5.html) to find an executable memory section, [/proc/pid/mem](https://man7.org/linux/man-pages/man5/proc_pid_mem.5.html) to write to it, and [/proc/pid/syscall](https://man7.org/linux/man-pages/man5/proc_pid_syscall.5.html) to set the RIP register to the injected payload.
 
 ## Usage
 Add `linc` as a dependency to your Rust project
