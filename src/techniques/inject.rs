@@ -27,9 +27,9 @@ use crate::primitives::ptrace::ptace_write_rip;
 /// // Inject shellcode into process with PID 1234
 /// let payload = Payload::<Inject>::from_file("shellcode.bin", 1234).unwrap();
 ///
-/// inject::hollow(payload).unwrap();
+/// inject::ptrace_overwrite_rip(payload).unwrap();
 /// ```
-pub fn hollow(payload: Payload<Inject>) -> Result<()> {
+pub fn ptrace_overwrite_rip(payload: Payload<Inject>) -> Result<()> {
     match payload.payload_type() {
         PayloadType::Executable => {
             return Err(Error::NotImplemented(
