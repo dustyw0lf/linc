@@ -1,6 +1,6 @@
 //! A wrapper error type and a matching Result type
 use std::ffi::{FromVecWithNulError, NulError};
-use std::{error, fmt, io};
+use std::{error, fmt, io, num};
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -12,6 +12,7 @@ pub enum Error {
     Linux(nix::errno::Errno),
     NotImplemented(String),
     Nul(NulError),
+    ParseInt(num::ParseIntError),
     FromVecWithNul(FromVecWithNulError),
 }
 
@@ -24,6 +25,7 @@ impl fmt::Display for Error {
             Error::Linux(err) => write!(f, "{:?}: {}", err, err.desc()),
             Error::NotImplemented(ref string) => write!(f, "not implemented: {string}"),
             Error::Nul(ref err) => write!(f, "{err}"),
+            Error::ParseInt(ref err) => write!(f, "{err}"),
             Error::FromVecWithNul(ref err) => write!(f, "{err}"),
         }
     }
@@ -38,6 +40,7 @@ impl error::Error for Error {
             Error::Linux(ref err) => Some(err),
             Error::NotImplemented(_) => None,
             Error::Nul(ref err) => Some(err),
+            Error::ParseInt(ref err) => Some(err),
             Error::FromVecWithNul(ref err) => Some(err),
         }
     }
@@ -65,6 +68,12 @@ impl From<nix::errno::Errno> for Error {
 impl From<NulError> for Error {
     fn from(err: NulError) -> Self {
         Error::Nul(err)
+    }
+}
+
+impl From<num::ParseIntError> for Error {
+    fn from(err: num::ParseIntError) -> Self {
+        Error::ParseInt(err)
     }
 }
 
