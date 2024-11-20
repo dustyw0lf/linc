@@ -44,3 +44,10 @@ pub(crate) fn mem_write(pid: Pid, addr: u64, bytes: &[u8]) -> Result<()> {
 
     Ok(())
 }
+
+pub(crate) fn mem_rip(pid: Pid) -> Result<u64> {
+    let binding = fs::read_to_string(format!("/proc/{}/syscall", pid.as_raw()))?;
+    let rip = binding.split_whitespace().last().unwrap();
+
+    Ok(u64::from_str_radix(&rip[2..], 16)?)
+}
