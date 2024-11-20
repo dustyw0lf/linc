@@ -14,7 +14,11 @@ Currently implemented techniques:
 
 ### Inject
 - Using [ptrace](https://man7.org/linux/man-pages/man2/ptrace.2.html) to inject shellcode into an existing process by overwriting its RIP register.
-- Using [/proc/pid/maps](https://man7.org/linux/man-pages/man5/proc_pid_maps.5.html) to find an executable memory section, [/proc/pid/mem](https://man7.org/linux/man-pages/man5/proc_pid_mem.5.html) to write to it, and [/proc/pid/syscall](https://man7.org/linux/man-pages/man5/proc_pid_syscall.5.html) to set the RIP register to the injected payload.
+- Using [/proc/pid](https://man7.org/linux/man-pages/man5/proc_pid.5.html) to:
+    1. Find an executable memory section by parsing [/proc/pid/maps](https://man7.org/linux/man-pages/man5/proc_pid_maps.5.html).
+    2. Write payload to said section in [/proc/pid/mem](https://man7.org/linux/man-pages/man5/proc_pid_mem.5.html).
+    3. Find the RIP register by parsing [/proc/pid/syscall](https://man7.org/linux/man-pages/man5/proc_pid_syscall.5.html).
+    4. Jump to the payload address by overwrting RIP in [/proc/pid/mem](https://man7.org/linux/man-pages/man5/proc_pid_mem.5.html).
 
 ## Usage
 Add `linc` as a dependency to your Rust project
