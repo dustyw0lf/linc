@@ -65,9 +65,9 @@ pub fn hollow(payload: Payload<Inject>) -> Result<()> {
 /// // Inject shellcode into process with PID 1234
 /// let payload = Payload::<Inject>::from_file("shellcode.bin", 1234).unwrap();
 ///
-/// inject::procfs_hollow(payload).unwrap();
+/// inject::procfs_overwrite_rip(payload).unwrap();
 /// ```
-pub fn procfs_hollow(payload: Payload<Inject>) -> Result<()> {
+pub fn procfs_overwrite_rip(payload: Payload<Inject>) -> Result<()> {
     match payload.payload_type() {
         PayloadType::Executable => {
             return Err(Error::NotImplemented(
