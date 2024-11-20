@@ -1,6 +1,7 @@
-use nix::unistd::Pid;
-
 use std::fs;
+use std::io::{Seek, SeekFrom, Write};
+
+use nix::unistd::Pid;
 
 use crate::error::{Error, Result};
 
@@ -30,4 +31,16 @@ pub(crate) fn find_mem_region(
         .collect::<Result<Vec<u64>>>()?;
 
     Ok(addrs)
+}
+
+pub(crate) fn mem_write(pid: Pid, addr: u64, bytes: &[u8]) -> Result<()> {
+    let mut file = fs::File::options()
+        .write(true)
+        .open(format!("/proc/{}/maps", pid.as_raw()))?;
+
+    file.seek(SeekFrom::Start(addr))?;
+
+    file.write_all(bytes)?;
+
+    Ok(())
 }
