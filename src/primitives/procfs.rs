@@ -2,7 +2,7 @@ use nix::unistd::Pid;
 
 use std::fs;
 
-use crate::error::Result;
+use crate::error::{Error, Result};
 
 pub(crate) fn find_memory_region(
     pid: Pid,
@@ -13,7 +13,7 @@ pub(crate) fn find_memory_region(
 
     let matching_lines = maps.lines().filter(|line| {
         line.split_whitespace()
-            .nth(1)
+            .nth(1) // get the memory permissions
             .map_or(false, |perms| perms.contains(permissions))
     });
 
@@ -26,6 +26,7 @@ pub(crate) fn find_memory_region(
             };
             u64::from_str_radix(addr_range, 16)
         })
+        .map(|r| r.map_err(Error::ParseInt))
         .collect::<Result<Vec<u64>>>()?;
 
     Ok(addrs)
