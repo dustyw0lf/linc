@@ -7,7 +7,7 @@ use crate::error::{Error, Result};
 
 pub(crate) fn find_mem_region(
     pid: Pid,
-    get_start_address: bool,
+    get_start_addr: bool,
     permissions: &str,
 ) -> Result<Vec<u64>> {
     let maps = fs::read_to_string(format!("/proc/{}/maps", pid.as_raw()))?;
@@ -20,7 +20,7 @@ pub(crate) fn find_mem_region(
 
     let addrs = matching_lines
         .map(|line| {
-            let addr_range = if get_start_address {
+            let addr_range = if get_start_addr {
                 &line[..12]
             } else {
                 &line[13..25]
@@ -36,7 +36,7 @@ pub(crate) fn find_mem_region(
 pub(crate) fn mem_write(pid: Pid, addr: u64, bytes: &[u8]) -> Result<()> {
     let mut file = fs::File::options()
         .write(true)
-        .open(format!("/proc/{}/maps", pid.as_raw()))?;
+        .open(format!("/proc/{}/mem", pid.as_raw()))?;
 
     file.seek(SeekFrom::Start(addr))?;
 
