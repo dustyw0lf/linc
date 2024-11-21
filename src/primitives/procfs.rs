@@ -69,7 +69,7 @@ pub(crate) fn mem_exec(pid: Pid, addr: u64) -> Result<()> {
         // Padding
         0x00,
         0x00,
-        // jmp
+        // jmp rax
         0xFF,
         0xE0,
     ];
