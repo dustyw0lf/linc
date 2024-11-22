@@ -40,9 +40,9 @@ use crate::utils::{get_env, str_to_vec_c_string};
 ///     .set_target_args("YES");
 ///     .unwrap()
 ///
-/// spawn::hollow(payload).unwrap();
+/// spawn::ptrace_overwrite_rip(payload).unwrap();
 /// ```
-pub fn hollow(payload: Payload<Spawn>) -> Result<()> {
+pub fn ptrace_overwrite_rip(payload: Payload<Spawn>) -> Result<()> {
     match unsafe { fork() } {
         Ok(ForkResult::Parent { child, .. }) => match payload.payload_type() {
             PayloadType::Executable => {
