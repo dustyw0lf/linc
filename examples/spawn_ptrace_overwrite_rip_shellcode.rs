@@ -1,7 +1,7 @@
 use std::env::current_dir;
 
 use linc::payload::{Payload, PayloadResultExt, Spawn};
-use linc::techniques::spawn::hollow;
+use linc::techniques::spawn::ptrace_overwrite_rip;
 
 fn main() {
     let path = current_dir().unwrap();
@@ -23,7 +23,7 @@ fn main() {
         }
     };
 
-    if let Err(e) = hollow(payload) {
+    if let Err(e) = ptrace_overwrite_rip(payload) {
         eprintln!("An error occurred: {:?}", e);
     }
 }
