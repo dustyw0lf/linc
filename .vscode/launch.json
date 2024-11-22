@@ -174,6 +174,43 @@
         {
             "type": "lldb",
             "request": "launch",
+            "name": "Debug example 'spawn_procfs_overwrite_rip_shellcode'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=spawn_procfs_overwrite_rip_shellcode",
+                    "--package=linc"
+                ],
+                "filter": {
+                    "name": "spawn_procfs_overwrite_rip_shellcode",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'spawn_procfs_overwrite_rip_shellcode'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=spawn_procfs_overwrite_rip_shellcode",
+                    "--package=linc"
+                ],
+                "filter": {
+                    "name": "spawn_procfs_overwrite_rip_shellcode",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
             "name": "Debug example 'spawn_ptrace_overwrite_rip_shellcode'",
             "cargo": {
                 "args": [
