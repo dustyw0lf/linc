@@ -21,7 +21,7 @@ Additional techniques supported by the `linc::spawn` module:
 Process interaction on Linux is subject to several security restrictions:
 
 ### ptrace_scope
-The `ptrace_scope` setting controls process attachment permissions and affects all techniques in this crate:
+The [ptrace_scope](https://www.kernel.org/doc/Documentation/security/Yama.txt) setting controls process attachment permissions and affects all techniques in this crate:
 
 - 0: Processes can attach to any other process running under same UID
 - 1: Processes can only attach to their children (default on many distributions)
@@ -29,7 +29,7 @@ The `ptrace_scope` setting controls process attachment permissions and affects a
 - 3: Process attachment disabled entirely
 
 ### Process Dumpability
-A process must have the "dumpable" attribute set to true (which is the default for most user processes)
+A process must have the [dumpable](https://man7.org/linux/man-pages/man2/pr_set_dumpable.2const.html) attribute set to true (which is the default for most user processes)
 so another process may be able to attach to it.
 
 The current `ptrace_scope` can be checked using
