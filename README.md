@@ -17,6 +17,26 @@ Each module has implementations for the following techniques:
 Additional techniques supported by the `linc::spawn` module:
 - Using [memfd_create](https://man7.org/linux/man-pages/man2/memfd_create.2.html) to create an anonymous file in memory, write an ELF to it, and then execute.
 
+## Limitations
+Process interaction on Linux is subject to several security restrictions:
+
+### ptrace_scope
+The `ptrace_scope` setting controls process attachment permissions and affects all techniques in this crate:
+
+- 0: Processes can attach to any other process running under same UID
+- 1: Processes can only attach to their children (default on many distributions)
+- 2: Only processes with CAP_SYS_PTRACE capability can attach
+- 3: Process attachment disabled entirely
+
+### Process Dumpability
+A process must have the "dumpable" attribute set to true (which is the default for most user processes)
+so another process may be able to attach to it.
+
+The current `ptrace_scope` can be checked using
+```bash
+cat /proc/sys/kernel/yama/ptrace_scope
+```
+
 ## Usage
 Add `linc` as a dependency to your Rust project
 ```bash
