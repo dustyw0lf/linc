@@ -76,7 +76,7 @@ pub fn procfs_overwrite_rip(payload: Payload<Spawn>) -> Result<()> {
         Ok(ForkResult::Parent { child, .. }) => match payload.payload_type() {
             PayloadType::Executable => {
                 return Err(Error::NotImplemented(
-                    "hollow can not take executables".to_string(),
+                    "function can not take executables".to_string(),
                 ));
             }
             PayloadType::Shellcode => {
@@ -151,7 +151,7 @@ pub fn ptrace_overwrite_rip(payload: Payload<Spawn>) -> Result<()> {
         Ok(ForkResult::Parent { child, .. }) => match payload.payload_type() {
             PayloadType::Executable => {
                 return Err(Error::NotImplemented(
-                    "hollow can not take executables".to_string(),
+                    "function can not take executables".to_string(),
                 ));
             }
             PayloadType::Shellcode => {
