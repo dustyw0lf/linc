@@ -12,12 +12,14 @@ pub(crate) fn find_mem_region(
 ) -> Result<Vec<u64>> {
     let maps = fs::read_to_string(format!("/proc/{}/maps", pid.as_raw()))?;
 
+    // Filter for lines with the right permissions
     let matching_lines = maps.lines().filter(|line| {
         line.split_whitespace()
             .nth(1) // get the memory permissions
             .map_or(false, |perms| perms.contains(permissions))
     });
 
+    // Extract memory addresses from the filtered lines
     let addrs = matching_lines
         .map(|line| {
             let addr_range = if get_start_addr {
