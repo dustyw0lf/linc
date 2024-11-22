@@ -100,43 +100,6 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug example 'spawn_hollow_shellcode'",
-            "cargo": {
-                "args": [
-                    "build",
-                    "--example=spawn_hollow_shellcode",
-                    "--package=linc"
-                ],
-                "filter": {
-                    "name": "spawn_hollow_shellcode",
-                    "kind": "example"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug unit tests in example 'spawn_hollow_shellcode'",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--no-run",
-                    "--example=spawn_hollow_shellcode",
-                    "--package=linc"
-                ],
-                "filter": {
-                    "name": "spawn_hollow_shellcode",
-                    "kind": "example"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
             "name": "Debug example 'spawn_memfd_executable'",
             "cargo": {
                 "args": [
@@ -202,6 +165,43 @@
                 ],
                 "filter": {
                     "name": "spawn_memfd_shellcode",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'spawn_ptrace_overwrite_rip_shellcode'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=spawn_ptrace_overwrite_rip_shellcode",
+                    "--package=linc"
+                ],
+                "filter": {
+                    "name": "spawn_ptrace_overwrite_rip_shellcode",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'spawn_ptrace_overwrite_rip_shellcode'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=spawn_ptrace_overwrite_rip_shellcode",
+                    "--package=linc"
+                ],
+                "filter": {
+                    "name": "spawn_ptrace_overwrite_rip_shellcode",
                     "kind": "example"
                 }
             },
