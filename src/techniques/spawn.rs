@@ -71,6 +71,31 @@ pub fn memfd(payload: Payload<Spawn>) -> Result<()> {
     Ok(())
 }
 
+/// Uses procfs to inject shellcode into a target process by overwriting
+/// an executable memory section and then pointing the RIP register to it.
+/// Only works with shellcode payloads.
+///
+/// # Arguments
+/// * `payload` - A `Payload<Spawn>` containing shellcode and target process configuration
+///
+/// # Errors
+/// Returns an error if:
+/// - The payload type is `Executable` (only shellcode is supported)
+/// - Process manipulation fails
+/// - Memory region lookup fails
+/// - Memory writing fails
+/// - Process signaling fails
+///
+/// # Examples
+/// ```no_run
+/// use linc::payload::{Inject, Payload};
+/// use linc::techniques::spawn;
+///
+/// // Inject shellcode into process with PID 1234
+/// let payload = Payload::<Spawn>::from_file("shellcode.bin", 1234).unwrap();
+///
+/// spawn::procfs_overwrite_rip(payload).unwrap();
+/// ```
 pub fn procfs_overwrite_rip(payload: Payload<Spawn>) -> Result<()> {
     match unsafe { fork() } {
         Ok(ForkResult::Parent { child, .. }) => match payload.payload_type() {

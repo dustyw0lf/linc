@@ -9,7 +9,7 @@ use crate::primitives::procfs::{find_mem_region, mem_exec, mem_write};
 use crate::primitives::ptrace::ptace_write_rip;
 
 /// Uses procfs to inject shellcode into a target process by overwriting
-/// an executable memory section and then point the RIP register to it.
+/// an executable memory section and then pointing the RIP register to it.
 /// Only works with shellcode payloads.
 ///
 /// # Arguments
