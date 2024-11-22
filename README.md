@@ -28,13 +28,17 @@ The [ptrace_scope](https://www.kernel.org/doc/Documentation/security/Yama.txt) s
 - 2: Only processes with CAP_SYS_PTRACE capability can attach
 - 3: Process attachment disabled entirely
 
-### Process Dumpability
-A process must have the [dumpable](https://man7.org/linux/man-pages/man2/pr_set_dumpable.2const.html) attribute set to true (which is the default for most user processes)
-so another process may be able to attach to it.
-
 The current `ptrace_scope` can be checked using
 ```bash
 cat /proc/sys/kernel/yama/ptrace_scope
+```
+
+### Process Dumpability
+A process must have the [dumpable](https://man7.org/linux/man-pages/man2/pr_set_dumpable.2const.html) attribute set to true (which is the default for most user processes) so another process may be able to attach to it.
+
+Process' dumpability can be checked using
+```bash
+[ -r /proc/<pid>/mem ] && echo "Process is dumpable" || echo "Process is not dumpable or protected by ptrace_scope"
 ```
 
 ## Usage
