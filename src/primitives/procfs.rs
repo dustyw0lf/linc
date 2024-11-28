@@ -57,26 +57,14 @@ pub(crate) fn mem_rip(pid: Pid) -> Result<u64> {
 pub(crate) fn mem_exec(pid: Pid, addr: u64) -> Result<()> {
     let rip = mem_rip(pid)?;
 
-    let buf = &[
-        // mov rax
-        0x48,
-        0xB8,
-        // Memory addr bytes
-        (addr & 0xFF) as u8,
-        ((addr >> 8) & 0xFF) as u8,
-        ((addr >> 16) & 0xFF) as u8,
-        ((addr >> 24) & 0xFF) as u8,
-        ((addr >> 32) & 0xFF) as u8,
-        ((addr >> 40) & 0xFF) as u8,
-        // Padding
-        0x00,
-        0x00,
-        // jmp rax
-        0xFF,
-        0xE0,
+    let mut buf = [
+        0x48, 0xB8, // mov rax
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // Reserved for memory addr bytes
+        0xFF, 0xE0, // jmp rax
     ];
+    buf[2..10].copy_from_slice(&addr.to_le_bytes());
 
-    mem_write(pid, rip, buf)?;
+    mem_write(pid, rip, &buf)?;
 
     Ok(())
 }
